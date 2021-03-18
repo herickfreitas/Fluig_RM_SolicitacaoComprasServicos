@@ -1,0 +1,225 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <title>Solicitação de Compras e Serviços</title>
+
+  <link rel="stylesheet" type="text/css" href="/portal/resources/style-guide/css/fluig-style-guide.min.css">
+
+  <script src="/webdesk/vcXMLRPC.js"></script>
+  <script src="/portal/resources/js/jquery/jquery.js"></script>
+  <script src="/portal/resources/js/jquery/jquery-ui.min.js"></script>
+  <script src="/portal/resources/js/mustache/mustache-min.js"></script>
+  <script src="/portal/resources/style-guide/js/fluig-style-guide.min.js"></script>
+  <script type="text/javascript" src="numeral.js"></script>
+  <script type="text/javascript" src="custom.js"></script>
+  
+</head>
+
+<body>
+  <form name="FormSolicitacaoComprasServicos" role="form">
+    <div class="fluig-style-guide">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2 class="panel-title">Solicitação de Compras e Serviços</h2>
+        </div>
+        <div class="panel-body">
+          <div class="container-fluid">
+
+            <!-- Informação oculta por script INICIO -->
+            <div class="row form-group" id="dvCustomizada"> 
+              <div class="col-xs-4 col-md-4" id="divSolicitante">
+                <label class='control-label' id='lblSolicitante'>Solicitante</label>
+                <input class="form-control" type="text" name="solicitante" id="solicitante"   />
+              </div>
+              <div class="col-xs-4 col-md-4" id="divGestorcc">
+                <label class="control-label" id="lblGestorcc">Gestor do Centro de Custo</label>
+                <input class="form-control" type="text" name="gestorcc" id="gestorcc"    />
+              </div>
+              <div class="col-xs-4 col-md-4" id="divGrupoItem">
+                <label class="control-label" id="lblGrupoItem">Gestor do Centro de Custo</label>
+                <input class="form-control" type="text" name="grupoItem" id="grupoItem"    />
+              </div>
+            
+            </div>
+
+
+            <!-- Informação oculta por script FIM -->            
+
+<br><br>              
+			
+			<div class="row">
+              <div class="col-xs-2 col-md-2">
+                <label class="control-label" id="lblFilial"><strong>Selecione a Filial</strong></label>
+                <input  type="zoom"
+                        id = "filial"
+                        name="filial"
+                        data-zoom="{
+                            'displayKey':'NOMEFANTASIA',
+                            'datasetId':'_RM_FILIAL',
+                            'maximumSelectionLength':'1',
+                            'fields':[
+                                {
+                                  'field':'CODFILIAL',  
+                                  'label':'Cod. Filial'
+                                },{
+                                  'field':'NOMEFANTASIA',
+                                  'label':'Nome Fantasia',
+                                  'standard':'true'
+                                }
+                            ]
+                        }"
+                    />
+              </div>
+
+
+
+            <div class="col-xs-10 col-md-10">
+            <label class="control-label" id="lblCcusto"><strong>Selecione o Centro de Custo</strong></label>
+            <input  type="zoom"
+                          id = "ccusto"
+                          name="ccusto"
+                          data-zoom="{
+                              'displayKey':'CUSTO_NOME',
+                              'datasetId':'_RM_GCCUSTO',
+                              'maximumSelectionLength':'1',
+                              'fields':[
+                                  {
+                                    'field':'CODCCUSTO',
+                                    'label':'Cod. Centro de Custo'
+                                  },{
+                                    'field':'NOME',
+                                    'label':'Nome',
+                                    'standard':'true'
+                                  },{
+                                    'field':'CODREDUZIDO',
+                                    'label':'Reduzido'
+                                  }
+                              ]
+                          }"
+                      />
+            </div>
+        </div>
+
+      <br><br>  
+
+
+	    </div>
+	
+
+      <div class="row">
+        <button type="button" class="btn btn-primary" name="btn_addProduto" id="btn_addProduto">Adicionar Itens</button>
+      </div>
+      <br><br>
+      
+      <div class="container-fluid">
+        <div>
+        <table tablename="tbProdutos" id="tbProdutos" noaddbutton=true customFnDelete="fnCustomDelete(this)">
+          <thead>
+              <tr>
+                  <td class="col-xs-8 col-md-8"><b>Item</b></td>
+                  <td class="col-xs-2 col-md-2"><b>Qtd.</b></td>
+                  <td class="col-xs-2 col-md-2"><b>Valor Unitário</b></td>
+              </tr>
+          </thead>
+          <tr> 
+              <td class="col-xs-8 col-md-8"><input type="zoom" id = "nomeItem" name="nomeItem"
+                                                    data-zoom="{
+                                                        'displayKey':'NOME',
+                                                        'datasetId':'_RM_ITENS_COMPRA',
+                                                        'maximumSelectionLength':'1',
+                                                        'placeholder':'Digite o item',
+                                                        'fields':[
+                                                             {
+                                                              'field':'NOME',
+                                                              'label':'Nome',
+                                                              'standard':'true'
+                                                            }
+                                                        ]
+                                                    }" /></td>
+              <td class="col-xs-2 col-md-2"><input type="number"   name="quantidade"    id="quantidade"     class="form-control" ></td>
+              <td class="col-xs-2 col-md-2"><input type="text"   name="valorUnitario"    id="valorUnitario"     class="form-control" ></td>
+          </tr>    
+        </table>
+        </div>
+      </div>
+      
+<br><br>
+
+            
+            <div class="row">
+				<div class="col-xs-12 col-md-12">
+				  <label class="control-label" id="lblObservacaoMov"><strong>Observações</strong></label>
+				  <textarea class="form-control" rows="5" name="observacaoMov" id="observacaoMov" ></textarea>
+				</div>    
+			</div>    
+
+
+          </div>
+         </div>
+        </div>
+
+
+      </div>
+    </div>
+  </form>
+
+<script>
+
+// Clique do botão para adicionar linha na tabela de itens
+$("#btn_addProduto").on("click", function(e){
+  // Efetuando a validação do preenchimento da Filial
+  if(document.getElementById("filial").value == ""){ 
+    alert('Por favor, selecione a Filial');
+    document.getElementById("filial").focus();
+    return false
+  }
+  // Efetuando a validação do preenchimento do centro de custo
+  else if(document.getElementById("ccusto").value == ""){ 
+    alert('Por favor, selecione o Centro de custo');
+    document.getElementById("ccusto").focus();
+    return false
+  }
+  else {
+    // Incluindo item filtrando a filial e grupo de item
+    var numeroFilial = document.getElementById("filial").value.substring(0,1);
+    var linha = wdkAddChild('tbProdutos');
+    console.log("linha: "+linha);
+    //Verificando itens selecionados
+    var i = 1;
+    var grupoItem = "";
+    while ( i < linha ) {
+      // Validando se a lista de itens foi zerada
+      var element =  document.getElementById("nomeItem___"+i);
+      if (typeof(element) != 'undefined' && element != null) {
+        grupoItem =  document.getElementById("nomeItem___"+i).value.substring(0,5);
+        console.log("grupoItem: "+grupoItem);
+      }
+      i++;
+    }
+  
+    recarregazoom (numeroFilial,grupoItem, linha);
+
+
+    // Restringindo a alteração após adicionar iten
+    window["filial"].disable(true);
+    window["ccusto"].disable(true);
+
+    
+
+  }
+
+});
+
+
+// Ocultando div que possui parâmetros para evolução do Workflow
+$('#dvCustomizada').hide(); 
+
+
+
+
+</script>
+</body>
+</html>
