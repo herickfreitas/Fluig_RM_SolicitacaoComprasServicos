@@ -11,10 +11,12 @@
   <script src="/webdesk/vcXMLRPC.js"></script>
   <script src="/portal/resources/js/jquery/jquery.js"></script>
   <script src="/portal/resources/js/jquery/jquery-ui.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
   <script src="/portal/resources/js/mustache/mustache-min.js"></script>
   <script src="/portal/resources/style-guide/js/fluig-style-guide.min.js"></script>
   <script type="text/javascript" src="numeral.js"></script>
   <script type="text/javascript" src="custom.js"></script>
+  
   
 </head>
 
@@ -119,13 +121,14 @@
         <table tablename="tbProdutos" id="tbProdutos" noaddbutton=true customFnDelete="fnCustomDelete(this)">
           <thead>
               <tr>
-                  <td class="col-xs-8 col-md-8"><b>Item</b></td>
-                  <td class="col-xs-2 col-md-2"><b>Qtd.</b></td>
+                  <td class="col-xs-5 col-md-5"><b>Item</b></td>
+                  <td class="col-xs-1 col-md-1"><b>Qtd.</b></td>
                   <td class="col-xs-2 col-md-2"><b>Valor Unitário</b></td>
+                  <td class="col-xs-4 col-md-4"><b>Observação</b></td>
               </tr>
           </thead>
           <tr> 
-              <td class="col-xs-8 col-md-8"><input type="zoom" id = "nomeItem" name="nomeItem"
+              <td class="col-xs-5 col-md-5"><input type="zoom" id = "nomeItem" name="nomeItem"
                                                     data-zoom="{
                                                         'displayKey':'NOME',
                                                         'datasetId':'_RM_ITENS_COMPRA',
@@ -139,8 +142,9 @@
                                                             }
                                                         ]
                                                     }" /></td>
-              <td class="col-xs-2 col-md-2"><input type="number"   name="quantidade"    id="quantidade"     class="form-control" ></td>
-              <td class="col-xs-2 col-md-2"><input type="text"   name="valorUnitario"    id="valorUnitario"     class="form-control" ></td>
+              <td class="col-xs-1 col-md-1"><input type="number"   name="quantidade"    id="quantidade"     class="form-control" ></td>
+              <td class="col-xs-2 col-md-2"><input type="text"   name="valorUnitario"    id="valorUnitario"     class="form-control"  onkeypress="$(this).mask('###.###.##0,00', {reverse: true});"  ></td>
+              <td class="col-xs-4 col-md-4"><input type="text"   name="observacaoItem"    id="observacaoItem"     class="form-control" ></td>
           </tr>    
         </table>
         </div>
@@ -148,8 +152,7 @@
       
 <br><br>
 
-            
-            <div class="row">
+      <div class="row">
 				<div class="col-xs-12 col-md-12">
 				  <label class="control-label" id="lblObservacaoMov"><strong>Observações</strong></label>
 				  <textarea class="form-control" rows="5" name="observacaoMov" id="observacaoMov" ></textarea>
@@ -186,7 +189,9 @@ $("#btn_addProduto").on("click", function(e){
     // Incluindo item filtrando a filial e grupo de item
     var numeroFilial = document.getElementById("filial").value.substring(0,1);
     var linha = wdkAddChild('tbProdutos');
-    console.log("linha: "+linha);
+    //console.log("linha: "+linha);
+        
+
     //Verificando itens selecionados
     var i = 1;
     var grupoItem = "";
@@ -195,20 +200,15 @@ $("#btn_addProduto").on("click", function(e){
       var element =  document.getElementById("nomeItem___"+i);
       if (typeof(element) != 'undefined' && element != null) {
         grupoItem =  document.getElementById("nomeItem___"+i).value.substring(0,5);
-        console.log("grupoItem: "+grupoItem);
+        //console.log("grupoItem: "+grupoItem);
       }
       i++;
     }
-  
     recarregazoom (numeroFilial,grupoItem, linha);
-
-
+  
     // Restringindo a alteração após adicionar iten
     window["filial"].disable(true);
     window["ccusto"].disable(true);
-
-    
-
   }
 
 });
@@ -216,8 +216,6 @@ $("#btn_addProduto").on("click", function(e){
 
 // Ocultando div que possui parâmetros para evolução do Workflow
 $('#dvCustomizada').hide(); 
-
-
 
 
 </script>

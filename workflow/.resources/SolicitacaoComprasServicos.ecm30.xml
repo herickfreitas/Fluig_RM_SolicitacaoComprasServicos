@@ -29,7 +29,7 @@
     <processDefinitionVersionPK>
       <companyId>1</companyId>
       <processId>PMS - Solicitação de Compras/Serviços</processId>
-      <version>22</version>
+      <version>69</version>
     </processDefinitionVersionPK>
     <versionDescription></versionDescription>
     <formId>0</formId>
@@ -692,13 +692,27 @@ function ProcessamentoWorkflow(){&#xd;
             var authIwsDataServer = SERVICE_STUB.getBasicAuthenticatedClient(iWsDataServer, &apos;com.totvs.IwsDataServer&apos;, Usuario, Senha);&#xd;
             log.info(&quot;AprovarWorkflow -&gt; authIwsDataServer: &quot; + authIwsDataServer);&#xd;
             &#xd;
+            // identificando o grupo de iten relacionado&#xd;
+    		var indexes = hAPI.getChildrenIndexes(&quot;tbProdutos&quot;);&#xd;
+    		for (var i = 0; i &lt; indexes.length; i++) {&#xd;
+    			var item = (hAPI.getCardValue(&quot;nomeItem___&quot; + indexes[i]));&#xd;
+    			var grupoprd = item.substring(0,3);&#xd;
+    		}&#xd;
+            &#xd;
             // Passar os parametros&#xd;
             var dataServerName = &quot;MovMovimentoTBCData&quot;;&#xd;
             var contexto = &quot;CODCOLIGADA=1;CODUSUARIO=integracao;CODSISTEMA=T&quot;;&#xd;
-            // Chamada da função com os dados do movimento&#xd;
-            var XML = GetXmlProduto();&#xd;
-            //var XML = GetXmlServico();&#xd;
             &#xd;
+            // Direcionando para movimento 1.1.60 - Produto ou 1.1.80 - Serviço&#xd;
+            if (grupoprd == &apos;09.&apos;) {&#xd;
+            	var XML = GetXmlServico();&#xd;
+            }&#xd;
+            else {&#xd;
+            	var XML = GetXmlProduto();&#xd;
+            }&#xd;
+            &#xd;
+          &#xd;
+         // Chamada da função com os dados do movimento&#xd;
             var result = authIwsDataServer.saveRecord(dataServerName, XML, contexto);&#xd;
             log.info(&quot;AprovarWorkflow-&gt; authIwsDataServer.saveRecord: &quot; + result);&#xd;
             &#xd;
@@ -720,11 +734,11 @@ function ProcessamentoWorkflow(){&#xd;
 	&#xd;
 	}	&#xd;
 	&#xd;
-	&#xd;
-	&#xd;
-	function GetXmlProduto() {&#xd;
+&#xd;
+&#xd;
+	function GetXmlServico() {&#xd;
 		&#xd;
-		log.info(&quot;CUSTOM: geraXmlContrato - inicio&quot;);&#xd;
+		log.info(&quot;CUSTOM: GetXmlServico - inicio&quot;);&#xd;
 		var XML;&#xd;
 		&#xd;
 		// Coletando informações do form para XML&#xd;
@@ -736,6 +750,24 @@ function ProcessamentoWorkflow(){&#xd;
         var HISTORICO = &quot;SOLICITAÇÃO FLUIG : &quot;+IDFLUIG+&quot; - &quot;+&quot;SOLICITANTE : &quot;+SOLICITANTE.toUpperCase()+&quot; - &quot;+ (hAPI.getCardValue(&quot;observacaoMov&quot;)).toUpperCase();&#xd;
         //var HISTORICO = &quot;Solicitação Fluig : &quot;+IDFLUIG+&quot; - &quot;+(hAPI.getCardValue(&quot;observacaoMov&quot;));&#xd;
         &#xd;
+		var QTD_MOVIMENTO_temp = 0;&#xd;
+		var VALOR_MOVIMENTO_temp = 0;&#xd;
+        &#xd;
+        // CALCULANDO QUANTIDADE TOTAL E VALOR TOTAL PARA O MOVIMENTO//&#xd;
+		var indexes = hAPI.getChildrenIndexes(&quot;tbProdutos&quot;);&#xd;
+		for (var i = 0; i &lt; indexes.length; i++) {&#xd;
+			var qtd_item = (hAPI.getCardValue(&quot;quantidade___&quot; + indexes[i]));&#xd;
+			QTD_MOVIMENTO_temp = parseInt(QTD_MOVIMENTO_temp) + parseInt(qtd_item);&#xd;
+			var valor_item_temp = (hAPI.getCardValue(&quot;valorUnitario___&quot; + indexes[i]));&#xd;
+			var valor_itemAjustado = ((((valor_item_temp.replace(&quot;.&quot;,&quot;&quot;)).replace(&apos;,&apos;,&apos;.&apos;)).replace(&quot;R$&quot;,&quot;&quot;)).replace(&quot;$&quot;,&quot;&quot;)).replace(&quot; &quot;,&quot;&quot;);&#xd;
+			var valor_totalItem = (qtd_item * parseFloat(valor_itemAjustado));&#xd;
+			VALOR_MOVIMENTO_temp = VALOR_MOVIMENTO_temp + valor_totalItem;&#xd;
+			&#xd;
+		}&#xd;
+		&#xd;
+        // Para gravação o valorbruto retorna ao formato com &quot;,&quot;&#xd;
+        var VALOR_MOVIMENTO = (VALOR_MOVIMENTO_temp.toString()).replace(&apos;.&apos;,&apos;,&apos;);        &#xd;
+        var QTD_MOVIMENTO = (QTD_MOVIMENTO_temp.toString());&#xd;
         &#xd;
         &#xd;
         // Estruturando XML&#xd;
@@ -747,8 +779,8 @@ function ProcessamentoWorkflow(){&#xd;
 		&quot; &lt;CODLOC&gt;0&quot;+CODFILIAL+&quot;&lt;/CODLOC&gt;	&quot;  + &#xd;
 		&quot; &lt;CODLOCDESTINO&gt;0&quot;+CODFILIAL+&quot;&lt;/CODLOCDESTINO&gt;	&quot;  + &#xd;
 		&quot; &lt;NUMEROMOV&gt;0&lt;/NUMEROMOV&gt;	&quot;  + &#xd;
-		&quot; &lt;SERIE&gt;PDC&lt;/SERIE&gt;	&quot;  + &#xd;
-		&quot; &lt;CODTMV&gt;1.1.60&lt;/CODTMV&gt;	&quot;  + &#xd;
+		&quot; &lt;SERIE&gt;PDS&lt;/SERIE&gt;	&quot;  + &#xd;
+		&quot; &lt;CODTMV&gt;1.1.80&lt;/CODTMV&gt;	&quot;  + &#xd;
 		&quot; &lt;TIPO&gt;P&lt;/TIPO&gt;	&quot;  + &#xd;
 		&quot; &lt;STATUS&gt;A&lt;/STATUS&gt;	&quot;  + &#xd;
 		&quot; &lt;MOVIMPRESSO&gt;0&lt;/MOVIMPRESSO&gt;	&quot;  + &#xd;
@@ -757,9 +789,9 @@ function ProcessamentoWorkflow(){&#xd;
 		&quot; &lt;DATAEMISSAO&gt;&quot;+HOJE+&quot;&lt;/DATAEMISSAO&gt;	&quot;  + &#xd;
 		&quot; &lt;DATASAIDA&gt;&quot;+HOJE+&quot;&lt;/DATASAIDA&gt;	&quot;  + &#xd;
 		&quot; &lt;COMISSAOREPRES&gt;0.0000&lt;/COMISSAOREPRES&gt;	&quot;  + &#xd;
-		&quot; &lt;VALORBRUTO&gt;0.0000&lt;/VALORBRUTO&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORBRUTO&gt;&quot;+VALOR_MOVIMENTO+&quot;&lt;/VALORBRUTO&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORLIQUIDO&gt;&quot;+VALOR_MOVIMENTO+&quot;&lt;/VALORLIQUIDO&gt;	&quot;  +&#xd;
 		&quot; &lt;CODTB3FAT&gt;000&lt;/CODTB3FAT&gt;	&quot;  + &#xd;
-		&quot; &lt;VALORLIQUIDO&gt;0.0000&lt;/VALORLIQUIDO&gt;	&quot;  + &#xd;
 		&quot; &lt;VALOROUTROS&gt;0.0000&lt;/VALOROUTROS&gt;	&quot;  + &#xd;
 		&quot; &lt;PERCENTUALFRETE&gt;0.0000&lt;/PERCENTUALFRETE&gt;	&quot;  + &#xd;
 		&quot; &lt;VALORFRETE&gt;0.0000&lt;/VALORFRETE&gt;	&quot;  + &#xd;
@@ -771,9 +803,10 @@ function ProcessamentoWorkflow(){&#xd;
 		&quot; &lt;VALORDESP&gt;0.0000&lt;/VALORDESP&gt;	&quot;  + &#xd;
 		&quot; &lt;PERCCOMISSAO&gt;0.0000&lt;/PERCCOMISSAO&gt;	&quot;  + &#xd;
 		&quot; &lt;PESOLIQUIDO&gt;0.0000&lt;/PESOLIQUIDO&gt;	&quot;  + &#xd;
-		&quot; &lt;PESOBRUTO&gt;0.0000&lt;/PESOBRUTO&gt;	&quot;  + &#xd;
+		&quot; &lt;PESOBRUTO&gt;0.0000&lt;/PESOBRUTO&gt;	&quot;  +&#xd;
+		&quot; &lt;QUANTIDADE&gt;&quot;+QTD_MOVIMENTO+&quot;&lt;/QUANTIDADE&gt;	&quot;  + &#xd;
 		&quot; &lt;CODMOEVALORLIQUIDO&gt;R$&lt;/CODMOEVALORLIQUIDO&gt;	&quot;  + &#xd;
-		&quot; &lt;DATAMOVIMENTO&gt;&quot;+CODFILIAL+&quot;&lt;/DATAMOVIMENTO&gt;	&quot;  + &#xd;
+		&quot; &lt;DATAMOVIMENTO&gt;&quot;+HOJE+&quot;&lt;/DATAMOVIMENTO&gt;	&quot;  + &#xd;
 		&quot; &lt;GEROUFATURA&gt;0&lt;/GEROUFATURA&gt;	&quot;  + &#xd;
 		&quot; &lt;CODCCUSTO&gt;&quot;+CODCCUSTO+&quot;&lt;/CODCCUSTO&gt;	&quot;  + &#xd;
 		&quot; &lt;PERCCOMISSAOVEN2&gt;0.0000&lt;/PERCCOMISSAOVEN2&gt;	&quot;  + &#xd;
@@ -811,8 +844,8 @@ function ProcessamentoWorkflow(){&#xd;
 		&quot; &lt;HISTORICOLONGO&gt;&quot;+HISTORICO+&quot;&lt;/HISTORICOLONGO&gt;	&quot;  +&#xd;
 		&quot; &lt;HISTORICOCURTO&gt;&quot;+HISTORICO+&quot;&lt;/HISTORICOCURTO&gt;	&quot;  + &#xd;
 		&quot; &lt;RATEIOCCUSTODEPTO&gt;0.0000&lt;/RATEIOCCUSTODEPTO&gt;	&quot;  + &#xd;
-		&quot; &lt;VALORBRUTOORIG&gt;0.0000&lt;/VALORBRUTOORIG&gt;	&quot;  + &#xd;
-		&quot; &lt;VALORLIQUIDOORIG&gt;0.0000&lt;/VALORLIQUIDOORIG&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORBRUTOORIG&gt;&quot;+VALOR_MOVIMENTO+&quot;&lt;/VALORBRUTOORIG&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORLIQUIDOORIG&gt;&quot;+VALOR_MOVIMENTO+&quot;&lt;/VALORLIQUIDOORIG&gt;	&quot;  + &#xd;
 		&quot; &lt;VALOROUTROSORIG&gt;0.0000&lt;/VALOROUTROSORIG&gt;	&quot;  + &#xd;
 		&quot; &lt;VALORRATEIOLANORIG&gt;0.0000&lt;/VALORRATEIOLANORIG&gt;	&quot;  + &#xd;
 		&quot; &lt;FLAGCONCLUSAO&gt;0&lt;/FLAGCONCLUSAO&gt;	&quot;  + &#xd;
@@ -848,6 +881,24 @@ function ProcessamentoWorkflow(){&#xd;
 			&#xd;
 			var qtd = (hAPI.getCardValue(&quot;quantidade___&quot; + indexes[i]));&#xd;
 			log.info(&quot;==========[ getChildrenIndexes quantidade ]========== &quot; + qtd);&#xd;
+			&#xd;
+			var valorUnitario = (hAPI.getCardValue(&quot;valorUnitario___&quot; + indexes[i]));&#xd;
+			log.info(&quot;==========[ getChildrenIndexes valorUnitario ]========== &quot; + valorUnitario);&#xd;
+			&#xd;
+			//var valorUnitarioAjustado = valorUnitario.replace(&apos;,&apos;,&apos;.&apos;);&#xd;
+			var valorUnitario_temp = ((((valorUnitario.replace(&quot;.&quot;,&quot;&quot;)).replace(&apos;,&apos;,&apos;.&apos;)).replace(&quot;R$&quot;,&quot;&quot;)).replace(&quot;$&quot;,&quot;&quot;)).replace(&quot; &quot;,&quot;&quot;);&#xd;
+			log.info(&quot;==========[ getChildrenIndexes valorUnitarioAjustado ]========== &quot; + valorUnitario_temp);&#xd;
+			&#xd;
+			&#xd;
+			var valorTotalItem_temp = (qtd * parseFloat(valorUnitarioAjustado));&#xd;
+&#xd;
+	        // Para gravação o valorbruto retorna ao formato com &quot;,&quot;&#xd;
+	        var valorTotalItem = (valorTotalItem_temp.toString()).replace(&apos;.&apos;,&apos;,&apos;);&#xd;
+			var valorUnitarioAjustado = (valorUnitario_temp.toString()).replace(&apos;.&apos;,&apos;,&apos;);&#xd;
+	        &#xd;
+			var observacaoItem = (hAPI.getCardValue(&quot;observacaoItem___&quot; + indexes[i]));&#xd;
+			log.info(&quot;==========[ getChildrenIndexes observacaoItem ]========== &quot; + observacaoItem);&#xd;
+			&#xd;
 		 			&#xd;
 			XML = XML + &#xd;
 			&quot;	  &lt;TITMMOV&gt;	&quot;  + &#xd;
@@ -860,20 +911,19 @@ function ProcessamentoWorkflow(){&#xd;
 			&quot; &lt;CODIGOPRD&gt;&quot;+codigoprd+&quot;&lt;/CODIGOPRD&gt;	&quot;  + &#xd;
 			&quot; &lt;NOMEFANTASIA&gt;&quot;+NOMEFANTASIA+&quot;&lt;/NOMEFANTASIA&gt;	&quot;  + &#xd;
 			&quot; &lt;QUANTIDADE&gt;&quot;+qtd+&quot;&lt;/QUANTIDADE&gt;	&quot;  + &#xd;
-			&quot; &lt;PRECOUNITARIO&gt;0.0000&lt;/PRECOUNITARIO&gt;	&quot;  + &#xd;
+			&quot; &lt;PRECOUNITARIO&gt;&quot;+valorUnitarioAjustado+&quot;&lt;/PRECOUNITARIO&gt;	&quot;  + &#xd;
 			&quot; &lt;PRECOTABELA&gt;0.0000&lt;/PRECOTABELA&gt;	&quot;  + &#xd;
 			&quot; &lt;DATAEMISSAO&gt;&quot;+CODFILIAL+&quot;&lt;/DATAEMISSAO&gt;	&quot;  + &#xd;
 			&quot; &lt;QUANTIDADEARECEBER&gt;&quot;+qtd+&quot;&lt;/QUANTIDADEARECEBER&gt;	&quot;  + &#xd;
-			&quot; &lt;VALORUNITARIO&gt;0.0000&lt;/VALORUNITARIO&gt;	&quot;  + &#xd;
+			&quot; &lt;VALORUNITARIO&gt;&quot;+valorUnitarioAjustado+&quot;&lt;/VALORUNITARIO&gt;	&quot;  + &#xd;
 			&quot; &lt;VALORFINANCEIRO&gt;0.0000&lt;/VALORFINANCEIRO&gt;	&quot;  + &#xd;
 			&quot; &lt;CODCCUSTO&gt;&quot;+CODCCUSTO+&quot;&lt;/CODCCUSTO&gt;	&quot;  + &#xd;
 			&quot; &lt;ALIQORDENACAO&gt;0.0000&lt;/ALIQORDENACAO&gt;	&quot;  + &#xd;
 			&quot; &lt;QUANTIDADEORIGINAL&gt;&quot;+qtd+&quot;&lt;/QUANTIDADEORIGINAL&gt;	&quot;  + &#xd;
 			&quot; &lt;FLAG&gt;0&lt;/FLAG&gt;	&quot;  + &#xd;
-			&quot; &lt;BLOCK&gt;0&lt;/BLOCK&gt;	&quot;  + &#xd;
 			&quot; &lt;FATORCONVUND&gt;0.0000&lt;/FATORCONVUND&gt;	&quot;  + &#xd;
 			&quot; &lt;VLTRANSPITEM&gt;0.0000&lt;/VLTRANSPITEM&gt;	&quot;  + &#xd;
-			&quot; &lt;VALORTOTALITEM&gt;0.0000&lt;/VALORTOTALITEM&gt;	&quot;  + &#xd;
+			&quot; &lt;VALORTOTALITEM&gt;&quot;+valorTotalItem+&quot;&lt;/VALORTOTALITEM&gt;	&quot;  + &#xd;
 			&quot; &lt;QUANTIDADESEPARADA&gt;0.0000&lt;/QUANTIDADESEPARADA&gt;	&quot;  + &#xd;
 			&quot; &lt;PERCENTCOMISSAO&gt;0.0000&lt;/PERCENTCOMISSAO&gt;	&quot;  + &#xd;
 			&quot; &lt;COMISSAOREPRES&gt;0.0000&lt;/COMISSAOREPRES&gt;	&quot;  + &#xd;
@@ -889,13 +939,16 @@ function ProcessamentoWorkflow(){&#xd;
 			&quot; &lt;VALSERVICONFE&gt;0.0000&lt;/VALSERVICONFE&gt;	&quot;  + &#xd;
 			&quot; &lt;CODLOC&gt;0&quot;+CODFILIAL+&quot;&lt;/CODLOC&gt;	&quot;  + &#xd;
 			&quot; &lt;VALORBEM&gt;0.0000&lt;/VALORBEM&gt;	&quot;  + &#xd;
-			&quot; &lt;VALORLIQUIDO&gt;0.0000&lt;/VALORLIQUIDO&gt;	&quot;  + &#xd;
+			&quot; &lt;VALORLIQUIDO&gt;&quot;+valorUnitarioAjustado+&quot;&lt;/VALORLIQUIDO&gt;	&quot;  +&#xd;
+			&quot; &lt;VALORBRUTOITEM&gt;&quot;+valorUnitarioAjustado+&quot;&lt;/VALORBRUTOITEM&gt;	&quot;  +&#xd;
+			&quot; &lt;VALORBRUTOITEMORIG&gt;&quot;+valorUnitarioAjustado+&quot;&lt;/VALORBRUTOITEMORIG&gt;	&quot;  + 	&#xd;
 			&quot; &lt;RATEIOCCUSTODEPTO&gt;0.0000&lt;/RATEIOCCUSTODEPTO&gt;	&quot;  + &#xd;
 			&quot; &lt;VLTRANSPITEMORIG&gt;0.0000&lt;/VLTRANSPITEMORIG&gt;	&quot;  + &#xd;
 			&quot; &lt;QUANTIDADETOTAL&gt;&quot;+qtd+&quot;&lt;/QUANTIDADETOTAL&gt;	&quot;  + &#xd;
 			&quot; &lt;PRODUTOSUBSTITUTO&gt;0&lt;/PRODUTOSUBSTITUTO&gt;	&quot;  + &#xd;
 			&quot; &lt;PRECOUNITARIOSELEC&gt;0&lt;/PRECOUNITARIOSELEC&gt;	&quot;  + &#xd;
 			&quot; &lt;INTEGRAAPLICACAO&gt;T&lt;/INTEGRAAPLICACAO&gt;	&quot;  + &#xd;
+			&quot; &lt;HISTORICOLONGO&gt;&quot;+observacaoItem+&quot;&lt;/HISTORICOLONGO&gt;	&quot;  +			&#xd;
 			&quot; &lt;RECCREATEDBY&gt;&quot;+SOLICITANTE+&quot;&lt;/RECCREATEDBY&gt;	&quot;  + &#xd;
 			&quot; &lt;RECCREATEDON&gt;&quot;+HOJE+&quot;&lt;/RECCREATEDON&gt;	&quot;  + &#xd;
 			&quot; &lt;RECMODIFIEDBY&gt;&quot;+SOLICITANTE+&quot;&lt;/RECMODIFIEDBY&gt;	&quot;  + &#xd;
@@ -920,6 +973,251 @@ function ProcessamentoWorkflow(){&#xd;
 			}&#xd;
 		&#xd;
 		&#xd;
+		XML = XML + &quot;&lt;/MovMovimento&gt;&quot;;&#xd;
+		 &#xd;
+		log.info(&quot;CUSTOM: geraXML&quot;+XML );&#xd;
+		 &#xd;
+		return XML;&#xd;
+			      &#xd;
+			}  &#xd;
+	&#xd;
+	&#xd;
+	&#xd;
+	function GetXmlProduto() {&#xd;
+		&#xd;
+		log.info(&quot;CUSTOM: GetXmlProduto - inicio&quot;);&#xd;
+		var XML;&#xd;
+		&#xd;
+		// Coletando informações do form para XML&#xd;
+		var IDFLUIG = getValue(&apos;WKNumProces&apos;);&#xd;
+		var SOLICITANTE = hAPI.getCardValue(&quot;solicitante&quot;);&#xd;
+		var CODFILIAL = (hAPI.getCardValue(&quot;filial&quot;)).substring(0,1);&#xd;
+        var CODCCUSTO = (hAPI.getCardValue(&quot;ccusto&quot;)).substring(0,17);&#xd;
+        var HOJE = new Date().toISOString().slice(0,19); // Formato &quot;&quot;+DTDESPESAFORMAT+&quot;T22:34:02&quot;&#xd;
+        var HISTORICO = &quot;SOLICITAÇÃO FLUIG : &quot;+IDFLUIG+&quot; - &quot;+&quot;SOLICITANTE : &quot;+SOLICITANTE.toUpperCase()+&quot; - &quot;+ (hAPI.getCardValue(&quot;observacaoMov&quot;)).toUpperCase();&#xd;
+        //var HISTORICO = &quot;Solicitação Fluig : &quot;+IDFLUIG+&quot; - &quot;+(hAPI.getCardValue(&quot;observacaoMov&quot;));&#xd;
+        &#xd;
+		var QTD_MOVIMENTO_temp = 0;&#xd;
+		var VALOR_MOVIMENTO_temp = 0;&#xd;
+        &#xd;
+        // CALCULANDO QUANTIDADE TOTAL E VALOR TOTAL PARA O MOVIMENTO//&#xd;
+		var indexes = hAPI.getChildrenIndexes(&quot;tbProdutos&quot;);&#xd;
+		for (var i = 0; i &lt; indexes.length; i++) {&#xd;
+			var qtd_item = (hAPI.getCardValue(&quot;quantidade___&quot; + indexes[i]));&#xd;
+			QTD_MOVIMENTO_temp = parseInt(QTD_MOVIMENTO_temp) + parseInt(qtd_item);&#xd;
+			var valor_item_temp = (hAPI.getCardValue(&quot;valorUnitario___&quot; + indexes[i]));&#xd;
+			var valor_itemAjustado = ((((valor_item_temp.replace(&quot;.&quot;,&quot;&quot;)).replace(&apos;,&apos;,&apos;.&apos;)).replace(&quot;R$&quot;,&quot;&quot;)).replace(&quot;$&quot;,&quot;&quot;)).replace(&quot; &quot;,&quot;&quot;);&#xd;
+			var valor_totalItem = (qtd_item * parseFloat(valor_itemAjustado));&#xd;
+			VALOR_MOVIMENTO_temp = VALOR_MOVIMENTO_temp + valor_totalItem;&#xd;
+			&#xd;
+		}&#xd;
+		&#xd;
+        // Para gravação o valorbruto retorna ao formato com &quot;,&quot;&#xd;
+        var VALOR_MOVIMENTO = (VALOR_MOVIMENTO_temp.toString()).replace(&apos;.&apos;,&apos;,&apos;);        &#xd;
+        var QTD_MOVIMENTO = (QTD_MOVIMENTO_temp.toString());&#xd;
+        &#xd;
+        &#xd;
+        // Estruturando XML&#xd;
+		XML = &quot;&lt;MovMovimento &gt;&quot; +   &#xd;
+		&quot; &lt;TMOV&gt;	&quot;  + &#xd;
+		&quot; &lt;CODCOLIGADA&gt;1&lt;/CODCOLIGADA&gt;	&quot;  + &#xd;
+		&quot; &lt;IDMOV&gt;-1&lt;/IDMOV&gt;	&quot;  + &#xd;
+		&quot; &lt;CODFILIAL&gt;&quot;+CODFILIAL+&quot;&lt;/CODFILIAL&gt;	&quot;  + &#xd;
+		&quot; &lt;CODLOC&gt;0&quot;+CODFILIAL+&quot;&lt;/CODLOC&gt;	&quot;  + &#xd;
+		&quot; &lt;CODLOCDESTINO&gt;0&quot;+CODFILIAL+&quot;&lt;/CODLOCDESTINO&gt;	&quot;  + &#xd;
+		&quot; &lt;NUMEROMOV&gt;0&lt;/NUMEROMOV&gt;	&quot;  + &#xd;
+		&quot; &lt;SERIE&gt;PDC&lt;/SERIE&gt;	&quot;  + &#xd;
+		&quot; &lt;CODTMV&gt;1.1.60&lt;/CODTMV&gt;	&quot;  + &#xd;
+		&quot; &lt;TIPO&gt;P&lt;/TIPO&gt;	&quot;  + &#xd;
+		&quot; &lt;STATUS&gt;A&lt;/STATUS&gt;	&quot;  + &#xd;
+		&quot; &lt;MOVIMPRESSO&gt;0&lt;/MOVIMPRESSO&gt;	&quot;  + &#xd;
+		&quot; &lt;DOCIMPRESSO&gt;0&lt;/DOCIMPRESSO&gt;	&quot;  + &#xd;
+		&quot; &lt;FATIMPRESSA&gt;0&lt;/FATIMPRESSA&gt;	&quot;  + &#xd;
+		&quot; &lt;DATAEMISSAO&gt;&quot;+HOJE+&quot;&lt;/DATAEMISSAO&gt;	&quot;  + &#xd;
+		&quot; &lt;DATASAIDA&gt;&quot;+HOJE+&quot;&lt;/DATASAIDA&gt;	&quot;  + &#xd;
+		&quot; &lt;COMISSAOREPRES&gt;0.0000&lt;/COMISSAOREPRES&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORBRUTO&gt;&quot;+VALOR_MOVIMENTO+&quot;&lt;/VALORBRUTO&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORLIQUIDO&gt;&quot;+VALOR_MOVIMENTO+&quot;&lt;/VALORLIQUIDO&gt;	&quot;  +&#xd;
+		&quot; &lt;CODTB3FAT&gt;000&lt;/CODTB3FAT&gt;	&quot;  + &#xd;
+		&quot; &lt;VALOROUTROS&gt;0.0000&lt;/VALOROUTROS&gt;	&quot;  + &#xd;
+		&quot; &lt;PERCENTUALFRETE&gt;0.0000&lt;/PERCENTUALFRETE&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORFRETE&gt;0.0000&lt;/VALORFRETE&gt;	&quot;  + &#xd;
+		&quot; &lt;PERCENTUALSEGURO&gt;0.0000&lt;/PERCENTUALSEGURO&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORSEGURO&gt;0.0000&lt;/VALORSEGURO&gt;	&quot;  + &#xd;
+		&quot; &lt;PERCENTUALDESC&gt;0.0000&lt;/PERCENTUALDESC&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORDESC&gt;0.0000&lt;/VALORDESC&gt;	&quot;  + &#xd;
+		&quot; &lt;PERCENTUALDESP&gt;0.0000&lt;/PERCENTUALDESP&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORDESP&gt;0.0000&lt;/VALORDESP&gt;	&quot;  + &#xd;
+		&quot; &lt;PERCCOMISSAO&gt;0.0000&lt;/PERCCOMISSAO&gt;	&quot;  + &#xd;
+		&quot; &lt;PESOLIQUIDO&gt;0.0000&lt;/PESOLIQUIDO&gt;	&quot;  + &#xd;
+		&quot; &lt;PESOBRUTO&gt;0.0000&lt;/PESOBRUTO&gt;	&quot;  +&#xd;
+		&quot; &lt;QUANTIDADE&gt;&quot;+QTD_MOVIMENTO+&quot;&lt;/QUANTIDADE&gt;	&quot;  + &#xd;
+		&quot; &lt;CODMOEVALORLIQUIDO&gt;R$&lt;/CODMOEVALORLIQUIDO&gt;	&quot;  + &#xd;
+		&quot; &lt;DATAMOVIMENTO&gt;&quot;+HOJE+&quot;&lt;/DATAMOVIMENTO&gt;	&quot;  + &#xd;
+		&quot; &lt;GEROUFATURA&gt;0&lt;/GEROUFATURA&gt;	&quot;  + &#xd;
+		&quot; &lt;CODCCUSTO&gt;&quot;+CODCCUSTO+&quot;&lt;/CODCCUSTO&gt;	&quot;  + &#xd;
+		&quot; &lt;PERCCOMISSAOVEN2&gt;0.0000&lt;/PERCCOMISSAOVEN2&gt;	&quot;  + &#xd;
+		&quot; &lt;CODUSUARIO&gt;&quot;+SOLICITANTE+&quot;&lt;/CODUSUARIO&gt;	&quot;  + &#xd;
+		&quot; &lt;CODFILIALDESTINO&gt;&quot;+CODFILIAL+&quot;&lt;/CODFILIALDESTINO&gt;	&quot;  + &#xd;
+		&quot; &lt;GERADOPORLOTE&gt;0&lt;/GERADOPORLOTE&gt;	&quot;  + &#xd;
+		&quot; &lt;STATUSEXPORTCONT&gt;0&lt;/STATUSEXPORTCONT&gt;	&quot;  + &#xd;
+		&quot; &lt;GEROUCONTATRABALHO&gt;0&lt;/GEROUCONTATRABALHO&gt;	&quot;  + &#xd;
+		&quot; &lt;GERADOPORCONTATRABALHO&gt;0&lt;/GERADOPORCONTATRABALHO&gt;	&quot;  + &#xd;
+		&quot; &lt;HORULTIMAALTERACAO&gt;&quot;+HOJE+&quot;&lt;/HORULTIMAALTERACAO&gt;	&quot;  + &#xd;
+		&quot; &lt;INDUSOOBJ&gt;0.00&lt;/INDUSOOBJ&gt;	&quot;  + &#xd;
+		&quot; &lt;INTEGRADOBONUM&gt;0&lt;/INTEGRADOBONUM&gt;	&quot;  + &#xd;
+		&quot; &lt;FLAGPROCESSADO&gt;0&lt;/FLAGPROCESSADO&gt;	&quot;  + &#xd;
+		&quot; &lt;ABATIMENTOICMS&gt;0.0000&lt;/ABATIMENTOICMS&gt;	&quot;  + &#xd;
+		&quot; &lt;HORARIOEMISSAO&gt;&quot;+HOJE+&quot;&lt;/HORARIOEMISSAO&gt;	&quot;  + &#xd;
+		&quot; &lt;USUARIOCRIACAO&gt;&quot;+SOLICITANTE+&quot;&lt;/USUARIOCRIACAO&gt;	&quot;  + &#xd;
+		&quot; &lt;DATACRIACAO&gt;&quot;+HOJE+&quot;&lt;/DATACRIACAO&gt;	&quot;  + &#xd;
+		&quot; &lt;STSEMAIL&gt;0&lt;/STSEMAIL&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORBRUTOINTERNO&gt;0.0000&lt;/VALORBRUTOINTERNO&gt;	&quot;  + &#xd;
+		&quot; &lt;VINCULADOESTOQUEFL&gt;0&lt;/VINCULADOESTOQUEFL&gt;	&quot;  + &#xd;
+		&quot; &lt;VRBASEINSSOUTRAEMPRESA&gt;0.0000&lt;/VRBASEINSSOUTRAEMPRESA&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORDESCCONDICIONAL&gt;0.0000&lt;/VALORDESCCONDICIONAL&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORDESPCONDICIONAL&gt;0.0000&lt;/VALORDESPCONDICIONAL&gt;	&quot;  + &#xd;
+		&quot; &lt;CONTORCAMENTOANTIGO&gt;0&lt;/CONTORCAMENTOANTIGO&gt;	&quot;  + &#xd;
+		&quot; &lt;DATACONTABILIZACAO&gt;&quot;+CODFILIAL+&quot;&lt;/DATACONTABILIZACAO&gt;	&quot;  + &#xd;
+		&quot; &lt;INTEGRADOAUTOMACAO&gt;0&lt;/INTEGRADOAUTOMACAO&gt;	&quot;  + &#xd;
+		&quot; &lt;INTEGRAAPLICACAO&gt;T&lt;/INTEGRAAPLICACAO&gt;	&quot;  + &#xd;
+		&quot; &lt;DATALANCAMENTO&gt;&quot;+HOJE+&quot;&lt;/DATALANCAMENTO&gt;	&quot;  + &#xd;
+		&quot; &lt;EXTENPORANEO&gt;0&lt;/EXTENPORANEO&gt;	&quot;  + &#xd;
+		&quot; &lt;RECIBONFESTATUS&gt;0&lt;/RECIBONFESTATUS&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORMERCADORIAS&gt;0.0000&lt;/VALORMERCADORIAS&gt;	&quot;  + &#xd;
+		&quot; &lt;USARATEIOVALORFIN&gt;0&lt;/USARATEIOVALORFIN&gt;	&quot;  + &#xd;
+		&quot; &lt;CODCOLCFOAUX&gt;0&lt;/CODCOLCFOAUX&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORRATEIOLAN&gt;0.0000&lt;/VALORRATEIOLAN&gt;	&quot;  + &#xd;
+		&quot; &lt;HISTORICOLONGO&gt;&quot;+HISTORICO+&quot;&lt;/HISTORICOLONGO&gt;	&quot;  +&#xd;
+		&quot; &lt;HISTORICOCURTO&gt;&quot;+HISTORICO+&quot;&lt;/HISTORICOCURTO&gt;	&quot;  + &#xd;
+		&quot; &lt;RATEIOCCUSTODEPTO&gt;0.0000&lt;/RATEIOCCUSTODEPTO&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORBRUTOORIG&gt;&quot;+VALOR_MOVIMENTO+&quot;&lt;/VALORBRUTOORIG&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORLIQUIDOORIG&gt;&quot;+VALOR_MOVIMENTO+&quot;&lt;/VALORLIQUIDOORIG&gt;	&quot;  + &#xd;
+		&quot; &lt;VALOROUTROSORIG&gt;0.0000&lt;/VALOROUTROSORIG&gt;	&quot;  + &#xd;
+		&quot; &lt;VALORRATEIOLANORIG&gt;0.0000&lt;/VALORRATEIOLANORIG&gt;	&quot;  + &#xd;
+		&quot; &lt;FLAGCONCLUSAO&gt;0&lt;/FLAGCONCLUSAO&gt;	&quot;  + &#xd;
+		&quot; &lt;STATUSPARADIGMA&gt;N&lt;/STATUSPARADIGMA&gt;	&quot;  + &#xd;
+		&quot; &lt;STATUSINTEGRACAO&gt;N&lt;/STATUSINTEGRACAO&gt;	&quot;  + &#xd;
+		&quot; &lt;RECCREATEDBY&gt;&quot;+SOLICITANTE+&quot;&lt;/RECCREATEDBY&gt;	&quot;  + &#xd;
+		&quot; &lt;RECCREATEDON&gt;&quot;+HOJE+&quot;&lt;/RECCREATEDON&gt;	&quot;  + &#xd;
+		&quot; &lt;RECMODIFIEDBY&gt;&quot;+SOLICITANTE+&quot;&lt;/RECMODIFIEDBY&gt;	&quot;  + &#xd;
+		&quot; &lt;RECMODIFIEDON&gt;&quot;+HOJE+&quot;&lt;/RECMODIFIEDON&gt;	&quot;  + &#xd;
+		&quot; &lt;STATUSMOVINCLUSAOCOLAB&gt;0&lt;/STATUSMOVINCLUSAOCOLAB&gt;	&quot;  + &#xd;
+		&quot; &lt;CODCOLIGADA1&gt;1&lt;/CODCOLIGADA1&gt;	&quot;  + &#xd;
+		&quot; &lt;IDMOVHST&gt;-1&lt;/IDMOVHST&gt;	&quot;  + &#xd;
+		&quot;	  &lt;/TMOV&gt;	&quot;  &#xd;
+&#xd;
+		&#xd;
+&#xd;
+		// COLETA DE INFORMAÇÕES DO ZOOM nomeItem //&#xd;
+		var indexes = hAPI.getChildrenIndexes(&quot;tbProdutos&quot;);&#xd;
+		for (var i = 0; i &lt; indexes.length; i++) {&#xd;
+			var NSEQITMMOV = i+1;&#xd;
+			var item = (hAPI.getCardValue(&quot;nomeItem___&quot; + indexes[i]));&#xd;
+			var codigoprd = item.substring(0,10);&#xd;
+			log.info(&quot;==========[ getChildrenIndexes codigoprd ]========== &quot; + codigoprd);&#xd;
+			// Rodando dataset para coletar detalhes dos produtos&#xd;
+	        var T1 = DatasetFactory.createConstraint(&quot;CODIGOPRD&quot;, codigoprd, codigoprd, ConstraintType.MUST);&#xd;
+	        var constraints = new Array(T1);&#xd;
+	        var datasetReturned = DatasetFactory.getDataset(&quot;_RM_TPRODUTO&quot;, null, constraints, null);&#xd;
+			// Retirando o campo do resultado&#xd;
+			var IDPRD = datasetReturned.getValue(0, &quot;IDPRD&quot;);&#xd;
+			log.info(&quot;==========[ getChildrenIndexes IDPRD ]========== &quot; + IDPRD); 	        &#xd;
+			var NOMEFANTASIA = datasetReturned.getValue(0, &quot;NOMEFANTASIA&quot;);&#xd;
+			log.info(&quot;==========[ getChildrenIndexes NOMEFANTASIA ]========== &quot; + NOMEFANTASIA);&#xd;
+			&#xd;
+			var qtd = (hAPI.getCardValue(&quot;quantidade___&quot; + indexes[i]));&#xd;
+			log.info(&quot;==========[ getChildrenIndexes quantidade ]========== &quot; + qtd);&#xd;
+			&#xd;
+			var valorUnitario = (hAPI.getCardValue(&quot;valorUnitario___&quot; + indexes[i]));&#xd;
+			log.info(&quot;==========[ getChildrenIndexes valorUnitario ]========== &quot; + valorUnitario);&#xd;
+			&#xd;
+			//var valorUnitarioAjustado = valorUnitario.replace(&apos;,&apos;,&apos;.&apos;);&#xd;
+			var valorUnitario_temp = ((((valorUnitario.replace(&quot;.&quot;,&quot;&quot;)).replace(&apos;,&apos;,&apos;.&apos;)).replace(&quot;R$&quot;,&quot;&quot;)).replace(&quot;$&quot;,&quot;&quot;)).replace(&quot; &quot;,&quot;&quot;);&#xd;
+			log.info(&quot;==========[ getChildrenIndexes valorUnitarioAjustado ]========== &quot; + valorUnitario_temp);&#xd;
+			&#xd;
+			&#xd;
+			var valorTotalItem_temp = (qtd * parseFloat(valorUnitarioAjustado));&#xd;
+&#xd;
+	        // Para gravação o valorbruto retorna ao formato com &quot;,&quot;&#xd;
+	        var valorTotalItem = (valorTotalItem_temp.toString()).replace(&apos;.&apos;,&apos;,&apos;);&#xd;
+			var valorUnitarioAjustado = (valorUnitario_temp.toString()).replace(&apos;.&apos;,&apos;,&apos;);&#xd;
+			&#xd;
+			var observacaoItem = (hAPI.getCardValue(&quot;observacaoItem___&quot; + indexes[i]));&#xd;
+			log.info(&quot;==========[ getChildrenIndexes observacaoItem ]========== &quot; + observacaoItem);&#xd;
+			&#xd;
+		 			&#xd;
+			XML = XML + &#xd;
+			&quot;	  &lt;TITMMOV&gt;	&quot;  + &#xd;
+			&quot; &lt;CODCOLIGADA&gt;1&lt;/CODCOLIGADA&gt;	&quot;  + &#xd;
+			&quot; &lt;IDMOV&gt;-1&lt;/IDMOV&gt;	&quot;  + &#xd;
+			&quot; &lt;NSEQITMMOV&gt;&quot;+NSEQITMMOV+&quot;&lt;/NSEQITMMOV&gt;	&quot;  + &#xd;
+			&quot; &lt;CODFILIAL&gt;&quot;+CODFILIAL+&quot;&lt;/CODFILIAL&gt;	&quot;  + &#xd;
+			&quot; &lt;NUMEROSEQUENCIAL&gt;&quot;+NSEQITMMOV+&quot;&lt;/NUMEROSEQUENCIAL&gt;	&quot;  + &#xd;
+			&quot; &lt;IDPRD&gt;&quot;+IDPRD+&quot;&lt;/IDPRD&gt;	&quot;  + &#xd;
+			&quot; &lt;CODIGOPRD&gt;&quot;+codigoprd+&quot;&lt;/CODIGOPRD&gt;	&quot;  + &#xd;
+			&quot; &lt;NOMEFANTASIA&gt;&quot;+NOMEFANTASIA+&quot;&lt;/NOMEFANTASIA&gt;	&quot;  + &#xd;
+			&quot; &lt;QUANTIDADE&gt;&quot;+qtd+&quot;&lt;/QUANTIDADE&gt;	&quot;  + &#xd;
+			&quot; &lt;PRECOUNITARIO&gt;&quot;+valorUnitarioAjustado+&quot;&lt;/PRECOUNITARIO&gt;	&quot;  + &#xd;
+			&quot; &lt;PRECOTABELA&gt;0.0000&lt;/PRECOTABELA&gt;	&quot;  + &#xd;
+			&quot; &lt;DATAEMISSAO&gt;&quot;+CODFILIAL+&quot;&lt;/DATAEMISSAO&gt;	&quot;  + &#xd;
+			&quot; &lt;QUANTIDADEARECEBER&gt;&quot;+qtd+&quot;&lt;/QUANTIDADEARECEBER&gt;	&quot;  + &#xd;
+			&quot; &lt;VALORUNITARIO&gt;&quot;+valorUnitarioAjustado+&quot;&lt;/VALORUNITARIO&gt;	&quot;  + &#xd;
+			&quot; &lt;VALORFINANCEIRO&gt;0.0000&lt;/VALORFINANCEIRO&gt;	&quot;  + &#xd;
+			&quot; &lt;CODCCUSTO&gt;&quot;+CODCCUSTO+&quot;&lt;/CODCCUSTO&gt;	&quot;  + &#xd;
+			&quot; &lt;ALIQORDENACAO&gt;0.0000&lt;/ALIQORDENACAO&gt;	&quot;  + &#xd;
+			&quot; &lt;QUANTIDADEORIGINAL&gt;&quot;+qtd+&quot;&lt;/QUANTIDADEORIGINAL&gt;	&quot;  + &#xd;
+			&quot; &lt;FLAG&gt;0&lt;/FLAG&gt;	&quot;  + &#xd;
+			&quot; &lt;FATORCONVUND&gt;0.0000&lt;/FATORCONVUND&gt;	&quot;  + &#xd;
+			&quot; &lt;VLTRANSPITEM&gt;0.0000&lt;/VLTRANSPITEM&gt;	&quot;  + &#xd;
+			&quot; &lt;VALORTOTALITEM&gt;&quot;+valorTotalItem+&quot;&lt;/VALORTOTALITEM&gt;	&quot;  + &#xd;
+			&quot; &lt;QUANTIDADESEPARADA&gt;0.0000&lt;/QUANTIDADESEPARADA&gt;	&quot;  + &#xd;
+			&quot; &lt;PERCENTCOMISSAO&gt;0.0000&lt;/PERCENTCOMISSAO&gt;	&quot;  + &#xd;
+			&quot; &lt;COMISSAOREPRES&gt;0.0000&lt;/COMISSAOREPRES&gt;	&quot;  + &#xd;
+			&quot; &lt;VALORESCRITURACAO&gt;0.0000&lt;/VALORESCRITURACAO&gt;	&quot;  + &#xd;
+			&quot; &lt;VALORFINPEDIDO&gt;0.0000&lt;/VALORFINPEDIDO&gt;	&quot;  + &#xd;
+			&quot; &lt;VALOROPFRM1&gt;0.0000&lt;/VALOROPFRM1&gt;	&quot;  + &#xd;
+			&quot; &lt;VALOROPFRM2&gt;0.0000&lt;/VALOROPFRM2&gt;	&quot;  + &#xd;
+			&quot; &lt;PRECOEDITADO&gt;0&lt;/PRECOEDITADO&gt;	&quot;  + &#xd;
+			&quot; &lt;PRECOTOTALEDITADO&gt;0&lt;/PRECOTOTALEDITADO&gt;	&quot;  + &#xd;
+			&quot; &lt;VALORDESCCONDICONALITM&gt;0.0000&lt;/VALORDESCCONDICONALITM&gt;	&quot;  + &#xd;
+			&quot; &lt;VALORDESPCONDICIONALITM&gt;0.0000&lt;/VALORDESPCONDICIONALITM&gt;	&quot;  + &#xd;
+			&quot; &lt;VALORUNTORCAMENTO&gt;0.0000&lt;/VALORUNTORCAMENTO&gt;	&quot;  + &#xd;
+			&quot; &lt;VALSERVICONFE&gt;0.0000&lt;/VALSERVICONFE&gt;	&quot;  + &#xd;
+			&quot; &lt;CODLOC&gt;0&quot;+CODFILIAL+&quot;&lt;/CODLOC&gt;	&quot;  + &#xd;
+			&quot; &lt;VALORBEM&gt;0.0000&lt;/VALORBEM&gt;	&quot;  + &#xd;
+			&quot; &lt;VALORLIQUIDO&gt;&quot;+valorUnitarioAjustado+&quot;&lt;/VALORLIQUIDO&gt;	&quot;  +&#xd;
+			&quot; &lt;VALORBRUTOITEM&gt;&quot;+valorUnitarioAjustado+&quot;&lt;/VALORBRUTOITEM&gt;	&quot;  +&#xd;
+			&quot; &lt;VALORBRUTOITEMORIG&gt;&quot;+valorUnitarioAjustado+&quot;&lt;/VALORBRUTOITEMORIG&gt;	&quot;  + 	&#xd;
+			&quot; &lt;RATEIOCCUSTODEPTO&gt;0.0000&lt;/RATEIOCCUSTODEPTO&gt;	&quot;  + &#xd;
+			&quot; &lt;VLTRANSPITEMORIG&gt;0.0000&lt;/VLTRANSPITEMORIG&gt;	&quot;  + &#xd;
+			&quot; &lt;QUANTIDADETOTAL&gt;&quot;+qtd+&quot;&lt;/QUANTIDADETOTAL&gt;	&quot;  + &#xd;
+			&quot; &lt;PRODUTOSUBSTITUTO&gt;0&lt;/PRODUTOSUBSTITUTO&gt;	&quot;  + &#xd;
+			&quot; &lt;PRECOUNITARIOSELEC&gt;0&lt;/PRECOUNITARIOSELEC&gt;	&quot;  + &#xd;
+			&quot; &lt;INTEGRAAPLICACAO&gt;T&lt;/INTEGRAAPLICACAO&gt;	&quot;  + &#xd;
+			&quot; &lt;HISTORICOLONGO&gt;&quot;+observacaoItem+&quot;&lt;/HISTORICOLONGO&gt;	&quot;  +			&#xd;
+			&quot; &lt;RECCREATEDBY&gt;&quot;+SOLICITANTE+&quot;&lt;/RECCREATEDBY&gt;	&quot;  + &#xd;
+			&quot; &lt;RECCREATEDON&gt;&quot;+HOJE+&quot;&lt;/RECCREATEDON&gt;	&quot;  + &#xd;
+			&quot; &lt;RECMODIFIEDBY&gt;&quot;+SOLICITANTE+&quot;&lt;/RECMODIFIEDBY&gt;	&quot;  + &#xd;
+			&quot; &lt;RECMODIFIEDON&gt;&quot;+HOJE+&quot;&lt;/RECMODIFIEDON&gt;	&quot;  + &#xd;
+			&quot; &lt;CODCOLIGADA1&gt;1&lt;/CODCOLIGADA1&gt;	&quot;  + &#xd;
+			&quot; &lt;IDMOVHST&gt;-1&lt;/IDMOVHST&gt;	&quot;  + &#xd;
+			&quot; &lt;NSEQITMMOV1&gt;1&lt;/NSEQITMMOV1&gt;	&quot;  + &#xd;
+			&quot;	  &lt;/TITMMOV&gt;	&quot;; &#xd;
+		&#xd;
+			XML = XML +&#xd;
+			&quot;	  &lt;TITMMOVCOMPL&gt;	&quot;  + &#xd;
+			&quot; &lt;CODCOLIGADA&gt;1&lt;/CODCOLIGADA&gt;	&quot;  + &#xd;
+			&quot; &lt;IDMOV&gt;-1&lt;/IDMOV&gt;	&quot;  + &#xd;
+			&quot; &lt;NSEQITMMOV&gt;&quot;+NSEQITMMOV+&quot;&lt;/NSEQITMMOV&gt;	&quot;  + &#xd;
+			&quot; &lt;RECCREATEDBY&gt;&quot;+SOLICITANTE+&quot;&lt;/RECCREATEDBY&gt;	&quot;  + &#xd;
+			&quot; &lt;RECCREATEDON&gt;&quot;+HOJE+&quot;&lt;/RECCREATEDON&gt;	&quot;  + &#xd;
+			&quot; &lt;RECMODIFIEDBY&gt;&quot;+SOLICITANTE+&quot;&lt;/RECMODIFIEDBY&gt;	&quot;  + &#xd;
+			&quot; &lt;RECMODIFIEDON&gt;&quot;+HOJE+&quot;&lt;/RECMODIFIEDON&gt;	&quot;  + &#xd;
+			&quot; &lt;SERVICO&gt;0.0000&lt;/SERVICO&gt;	&quot;  + &#xd;
+			&quot;	  &lt;/TITMMOVCOMPL&gt;	&quot;;&#xd;
+			&#xd;
+			}&#xd;
 		&#xd;
 		&#xd;
 		XML = XML + &quot;&lt;/MovMovimento&gt;&quot;;&#xd;
@@ -939,7 +1237,7 @@ function ProcessamentoWorkflow(){&#xd;
         <companyId>1</companyId>
         <processId>SolicitacaoComprasServicos</processId>
         <propertyId>AutomaticTasks</propertyId>
-        <version>22</version>
+        <version>69</version>
       </advancedProcessPropertiesPK>
       <propertieValue></propertieValue>
     </AdvancedProcessProperties>
@@ -1017,7 +1315,7 @@ function ProcessamentoWorkflow(){&#xd;
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>SolicitacaoComprasServicos</processId>
-        <version>22</version>
+        <version>69</version>
         <linkSequence>192</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -1028,7 +1326,7 @@ function ProcessamentoWorkflow(){&#xd;
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>SolicitacaoComprasServicos</processId>
-        <version>22</version>
+        <version>69</version>
         <linkSequence>194</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -1039,7 +1337,7 @@ function ProcessamentoWorkflow(){&#xd;
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>SolicitacaoComprasServicos</processId>
-        <version>22</version>
+        <version>69</version>
         <linkSequence>194</linkSequence>
         <bendSequence>2</bendSequence>
       </processLinkBendPK>
@@ -1050,7 +1348,7 @@ function ProcessamentoWorkflow(){&#xd;
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>SolicitacaoComprasServicos</processId>
-        <version>22</version>
+        <version>69</version>
         <linkSequence>195</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -1064,7 +1362,7 @@ function ProcessamentoWorkflow(){&#xd;
       <extendedPropertyFieldPK>
         <companyId>1</companyId>
         <processId>SolicitacaoComprasServicos</processId>
-        <version>22</version>
+        <version>69</version>
         <stateSequence>0</stateSequence>
         <propertyName>AutomaticTasks</propertyName>
       </extendedPropertyFieldPK>
@@ -1082,7 +1380,7 @@ function ProcessamentoWorkflow(){&#xd;
       <id>0</id>
       <tenantId>0</tenantId>
       <processId>SolicitacaoComprasServicos</processId>
-      <processVersion>22</processVersion>
+      <processVersion>69</processVersion>
       <stateSequence>145</stateSequence>
       <appKey>approval</appKey>
       <appField>title</appField>
@@ -1092,7 +1390,7 @@ function ProcessamentoWorkflow(){&#xd;
       <id>0</id>
       <tenantId>0</tenantId>
       <processId>SolicitacaoComprasServicos</processId>
-      <processVersion>22</processVersion>
+      <processVersion>69</processVersion>
       <stateSequence>145</stateSequence>
       <appKey>approval</appKey>
       <appField>description</appField>
@@ -1103,7 +1401,7 @@ function ProcessamentoWorkflow(){&#xd;
       <id>0</id>
       <tenantId>0</tenantId>
       <processId>SolicitacaoComprasServicos</processId>
-      <processVersion>22</processVersion>
+      <processVersion>69</processVersion>
       <stateSequence>145</stateSequence>
       <appKey>approval</appKey>
       <appField>highlight</appField>
@@ -1113,7 +1411,7 @@ function ProcessamentoWorkflow(){&#xd;
       <id>0</id>
       <tenantId>0</tenantId>
       <processId>SolicitacaoComprasServicos</processId>
-      <processVersion>22</processVersion>
+      <processVersion>69</processVersion>
       <stateSequence>145</stateSequence>
       <appKey>approval</appKey>
       <appField>approve</appField>
@@ -1123,7 +1421,7 @@ function ProcessamentoWorkflow(){&#xd;
       <id>0</id>
       <tenantId>0</tenantId>
       <processId>SolicitacaoComprasServicos</processId>
-      <processVersion>22</processVersion>
+      <processVersion>69</processVersion>
       <stateSequence>145</stateSequence>
       <appKey>approval</appKey>
       <appField>reject</appField>
@@ -1133,7 +1431,7 @@ function ProcessamentoWorkflow(){&#xd;
       <id>0</id>
       <tenantId>0</tenantId>
       <processId>SolicitacaoComprasServicos</processId>
-      <processVersion>22</processVersion>
+      <processVersion>69</processVersion>
       <stateSequence>161</stateSequence>
       <appKey>approval</appKey>
       <appField>title</appField>
@@ -1143,7 +1441,7 @@ function ProcessamentoWorkflow(){&#xd;
       <id>0</id>
       <tenantId>0</tenantId>
       <processId>SolicitacaoComprasServicos</processId>
-      <processVersion>22</processVersion>
+      <processVersion>69</processVersion>
       <stateSequence>161</stateSequence>
       <appKey>approval</appKey>
       <appField>description</appField>
@@ -1154,7 +1452,7 @@ function ProcessamentoWorkflow(){&#xd;
       <id>0</id>
       <tenantId>0</tenantId>
       <processId>SolicitacaoComprasServicos</processId>
-      <processVersion>22</processVersion>
+      <processVersion>69</processVersion>
       <stateSequence>161</stateSequence>
       <appKey>approval</appKey>
       <appField>highlight</appField>
@@ -1164,7 +1462,7 @@ function ProcessamentoWorkflow(){&#xd;
       <id>0</id>
       <tenantId>0</tenantId>
       <processId>SolicitacaoComprasServicos</processId>
-      <processVersion>22</processVersion>
+      <processVersion>69</processVersion>
       <stateSequence>161</stateSequence>
       <appKey>approval</appKey>
       <appField>approve</appField>
@@ -1174,7 +1472,7 @@ function ProcessamentoWorkflow(){&#xd;
       <id>0</id>
       <tenantId>0</tenantId>
       <processId>SolicitacaoComprasServicos</processId>
-      <processVersion>22</processVersion>
+      <processVersion>69</processVersion>
       <stateSequence>161</stateSequence>
       <appKey>approval</appKey>
       <appField>reject</appField>
@@ -1184,7 +1482,7 @@ function ProcessamentoWorkflow(){&#xd;
       <id>0</id>
       <tenantId>0</tenantId>
       <processId>SolicitacaoComprasServicos</processId>
-      <processVersion>22</processVersion>
+      <processVersion>69</processVersion>
       <stateSequence>180</stateSequence>
       <appKey>approval</appKey>
       <appField>title</appField>
@@ -1194,7 +1492,7 @@ function ProcessamentoWorkflow(){&#xd;
       <id>0</id>
       <tenantId>0</tenantId>
       <processId>SolicitacaoComprasServicos</processId>
-      <processVersion>22</processVersion>
+      <processVersion>69</processVersion>
       <stateSequence>180</stateSequence>
       <appKey>approval</appKey>
       <appField>description</appField>
@@ -1205,7 +1503,7 @@ function ProcessamentoWorkflow(){&#xd;
       <id>0</id>
       <tenantId>0</tenantId>
       <processId>SolicitacaoComprasServicos</processId>
-      <processVersion>22</processVersion>
+      <processVersion>69</processVersion>
       <stateSequence>180</stateSequence>
       <appKey>approval</appKey>
       <appField>highlight</appField>
@@ -1215,7 +1513,7 @@ function ProcessamentoWorkflow(){&#xd;
       <id>0</id>
       <tenantId>0</tenantId>
       <processId>SolicitacaoComprasServicos</processId>
-      <processVersion>22</processVersion>
+      <processVersion>69</processVersion>
       <stateSequence>180</stateSequence>
       <appKey>approval</appKey>
       <appField>approve</appField>
