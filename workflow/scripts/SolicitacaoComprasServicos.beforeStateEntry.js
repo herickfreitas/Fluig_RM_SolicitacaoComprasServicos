@@ -312,7 +312,7 @@ function ProcessamentoWorkflow(){
 			" <QUANTIDADE>"+qtd+"</QUANTIDADE>	"  + 
 			" <PRECOUNITARIO>"+valorUnitarioAjustado+"</PRECOUNITARIO>	"  + 
 			" <PRECOTABELA>0.0000</PRECOTABELA>	"  + 
-			" <DATAEMISSAO>"+CODFILIAL+"</DATAEMISSAO>	"  + 
+			" <DATAEMISSAO>"+HOJE+"</DATAEMISSAO>	"  + 
 			" <QUANTIDADEARECEBER>"+qtd+"</QUANTIDADEARECEBER>	"  + 
 			" <VALORUNITARIO>"+valorUnitarioAjustado+"</VALORUNITARIO>	"  + 
 			" <VALORFINANCEIRO>0.0000</VALORFINANCEIRO>	"  + 
@@ -559,7 +559,7 @@ function ProcessamentoWorkflow(){
 			" <QUANTIDADE>"+qtd+"</QUANTIDADE>	"  + 
 			" <PRECOUNITARIO>"+valorUnitarioAjustado+"</PRECOUNITARIO>	"  + 
 			" <PRECOTABELA>0.0000</PRECOTABELA>	"  + 
-			" <DATAEMISSAO>"+CODFILIAL+"</DATAEMISSAO>	"  + 
+			" <DATAEMISSAO>"+HOJE+"</DATAEMISSAO>	"  + 
 			" <QUANTIDADEARECEBER>"+qtd+"</QUANTIDADEARECEBER>	"  + 
 			" <VALORUNITARIO>"+valorUnitarioAjustado+"</VALORUNITARIO>	"  + 
 			" <VALORFINANCEIRO>0.0000</VALORFINANCEIRO>	"  + 
