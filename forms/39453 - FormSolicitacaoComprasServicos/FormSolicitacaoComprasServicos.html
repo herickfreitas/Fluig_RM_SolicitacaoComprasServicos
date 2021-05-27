@@ -123,7 +123,8 @@
               <tr>
                   <td class="col-xs-5 col-md-5"><b>Item</b></td>
                   <td class="col-xs-1 col-md-1"><b>Qtd.</b></td>
-                  <td class="col-xs-2 col-md-2"><b>Valor Unitário</b></td>
+                  <td class="col-xs-1 col-md-1"><b>Valor Unitário</b></td>
+                  <td class="col-xs-1 col-md-1"><b>Valor Total</b></td>
                   <td class="col-xs-4 col-md-4"><b>Observação</b></td>
               </tr>
           </thead>
@@ -142,9 +143,10 @@
                                                             }
                                                         ]
                                                     }" /></td>
-              <td class="col-xs-1 col-md-1"><input type="number"   name="quantidade"    id="quantidade"     class="form-control" ></td>
-              <td class="col-xs-2 col-md-2"><input type="text"   name="valorUnitario"    id="valorUnitario"     class="form-control"  onkeypress="$(this).mask('###.###.##0,00', {reverse: true});"  ></td>
-              <td class="col-xs-4 col-md-4"><input type="text"   name="observacaoItem"    id="observacaoItem"     class="form-control" ></td>
+              <td class="col-xs-1 col-md-1"><input type="number"    name="quantidade"       id="quantidade"       class="form-control" ></td>
+              <td class="col-xs-1 col-md-1"><input type="text"      name="valorUnitario"    id="valorUnitario"    class="form-control"   onkeypress="$(this).mask('###.###.##0,00', {reverse: true});"  ></td>
+              <td class="col-xs-1 col-md-1"><input type="text"      name="valorTotal"       id="valorTotal"       class="form-control" ></td>
+              <td class="col-xs-4 col-md-4"><input type="text"      name="observacaoItem"   id="observacaoItem"   class="form-control" ></td>
           </tr>    
         </table>
         </div>
@@ -190,8 +192,22 @@ $("#btn_addProduto").on("click", function(e){
     var numeroFilial = document.getElementById("filial").value.substring(0,1);
     var linha = wdkAddChild('tbProdutos');
     //console.log("linha: "+linha);
-        
 
+    // calculando valor total
+    $(function () {
+    $("#tbProdutos").on("blur", "#valorUnitario___"+linha, function () {
+      var quant     = document.getElementById("quantidade___"+linha).value;
+      var valorUnit = document.getElementById("valorUnitario___"+linha).value;
+      var valorUnitAjustado = ((((valorUnit.replace(".","")).replace(',','.')).replace("R$","")).replace("$","")).replace(" ","");
+      //var valorTot = (parseInt(quant) * parseFloat(valorUnitAjustado)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); // COM R$
+      var valorTot = (parseInt(quant) * parseFloat(valorUnitAjustado)).toLocaleString('pt-BR', { minimumFractionDigits: 2 });  // SEM R$
+      console.log(('Valor Total: '+valorTot));
+
+      $("#valorTotal___"+linha).val(valorTot);
+      })
+    });
+
+    
     //Verificando itens selecionados
     var i = 1;
     var grupoItem = "";
