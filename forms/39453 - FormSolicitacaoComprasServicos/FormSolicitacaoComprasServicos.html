@@ -32,23 +32,54 @@
 
             <!-- Informação oculta por script INICIO -->
             <div class="row form-group" id="dvCustomizada"> 
-              <div class="col-xs-4 col-md-4" id="divSolicitante">
+              <div class="col-xs-3 col-md-3" id="divSolicitante">
                 <label class='control-label' id='lblSolicitante'>Solicitante</label>
                 <input class="form-control" type="text" name="solicitante" id="solicitante"   />
               </div>
-              <div class="col-xs-4 col-md-4" id="divGestorcc">
+              <div class="col-xs-3 col-md-3" id="divGestorcc">
                 <label class="control-label" id="lblGestorcc">Gestor do Centro de Custo</label>
                 <input class="form-control" type="text" name="gestorcc" id="gestorcc"    />
               </div>
-              <div class="col-xs-4 col-md-4" id="divGrupoItem">
-                <label class="control-label" id="lblGrupoItem">Gestor do Centro de Custo</label>
+              <div class="col-xs-3 col-md-3" id="divGrupoItem">
+                <label class="control-label" id="lblGrupoItem">Grupo item</label>
                 <input class="form-control" type="text" name="grupoItem" id="grupoItem"    />
               </div>
-            
+              <div class="col-xs-3 col-md-3" id="divDesignador">
+                <label class="control-label" id="lblDesignador">Designador</label>
+                <input class="form-control" type="text" name="designador" id="designador"    />
+              </div>
             </div>
 
 
             <!-- Informação oculta por script FIM -->            
+
+<br><br>              
+			
+      <div class="row">
+          <div class="col-xs-12 col-md-12" id="dvComprador">
+            <label class="control-label" id="lblComprador"><strong>Selecione o Comprador</strong></label>
+            <input  type="zoom"
+                    id = "comprador"
+                    name="comprador"
+                    data-zoom="{
+                      'displayKey':'CODUSUARIO',
+                      'datasetId':'_RM_COMPRADORES',
+                      'maximumSelectionLength':'1',
+                      'fields':[
+                        {
+                          'field':'NOME',  
+                          'label':'Nome Comprador'
+                        },{
+                          'field':'CODUSUARIO',
+                          'label':'Usuário',
+                          'standard':'true'
+                          }
+                        ]
+              }"
+            />
+          </div>
+        </div>
+
 
 <br><br>              
 			
@@ -75,7 +106,7 @@
                         }"
                     />
               </div>
-
+      
 
 
             <div class="col-xs-10 col-md-10">

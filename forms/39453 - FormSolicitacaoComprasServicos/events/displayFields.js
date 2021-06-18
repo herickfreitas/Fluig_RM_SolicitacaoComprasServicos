@@ -4,8 +4,23 @@ function displayFields(form,customHTML){
 	var inicioPadrao = 0;
 	var ajustarSolicitacao = 180;
 	var inicioProcesso = 2;
+	var designador = 195;
 	
 	log.info("displayFields WKNumState "+activity);
+	
+	/* Controlando exibição da div para seleção do Comprador */
+	customHTML.append("<script>");
+	customHTML.append("$(document).ready(function(){ "); 
+	
+	if (activity != designador)  {
+		customHTML.append("$('#dvComprador').hide();");
+	}
+	else {
+		customHTML.append("$('#dvComprador').show();");
+	}
+	customHTML.append(" });");
+	customHTML.append("</script>");
+	
 	
 	if ((activity != inicioPadrao) && (activity != ajustarSolicitacao)) {
 		
@@ -22,7 +37,12 @@ function displayFields(form,customHTML){
 	    // Laço de repetição para habilitar/desabilitar os campos
 	    while (it.hasNext()) { 
 	        var key = it.next();
-	        form.setEnabled(key, habilitar);
+	        // Não irá desabilitar o campo para seleção de comprador.
+	        if (key != "comprador"){	
+	        	log.info("displayFields key "+key);
+		        form.setEnabled(key, habilitar);	
+	        }
+	        
 	    }
 		
 	}

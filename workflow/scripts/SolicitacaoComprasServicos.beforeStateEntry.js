@@ -24,17 +24,22 @@ function beforeStateEntry(sequenceId){
 function ProcessamentoWorkflow(){
 	try { 
 		
-		log.info("==========[ ProcessamentoWorkflow ENTROU ]==========");
-	
+		///////////////////////////////////////
+		// 		ATRIBUINDO SOLICITANTE		 //
+		///////////////////////////////////////
+		
 		//Recupera o usuário corrente associado a atividade
 		var requisitante = getValue("WKUser");		
-		log.info("==========[ ProcessamentoWorkflow requisitante ]=========="+requisitante);
+		log.info("==========[ ProcessamentoWorkflow requisitante/solicitante ]=========="+requisitante);
 		
 		// Gravando valores no formulário
 		hAPI.setCardValue("solicitante", requisitante);
 		
 
-		// TRATANDO RESPONSÁVEL PELO CENTRO DE CUSTO - INICIO //
+		
+		///////////////////////////////////////////////////////////////////////////
+		// 					ATRIBUINDO RESPONSÁVEL PELO CENTRO DE CUSTO			 //
+		///////////////////////////////////////////////////////////////////////////
 		
 		// Coleta do centro de custo seleciondo no formulário
         var ccustoTotal = hAPI.getCardValue("ccusto");
@@ -57,6 +62,30 @@ function ProcessamentoWorkflow(){
         
         // Gravando retorno no formulário		
 		hAPI.setCardValue("gestorcc", chefe);
+		
+		
+		
+		///////////////////////////////////////
+		// 		ATRIBUINDO DESIGNADOR		 //
+		///////////////////////////////////////
+		
+		// Coleta da filial selecionda no formulário
+        var filialTotal = hAPI.getCardValue("filial");
+        var filial = filialTotal.substring(0,1);
+        log.info("==========[ ProcessamentoWorkflow filialTotal ]=========="+filialTotal);
+        log.info("==========[ ProcessamentoWorkflow filial ]=========="+filial);
+        
+        var degignador = '';
+        if (filial == '1') {
+        	designador = 'ailtonleal';
+        }
+        else {
+        	designador = 'alessandrasoares';
+        }
+        
+        // Gravando informação no formulário
+        log.info("==========[ ProcessamentoWorkflow designador ]=========="+designador);
+		hAPI.setCardValue("designador", designador);
 
 		
 		}
@@ -69,7 +98,14 @@ function ProcessamentoWorkflow(){
 	}	
 	
 
-	function AprovarWorkflow(){ // Inserir movimento no RM
+
+
+	function AprovarWorkflow(){ 
+
+		///////////////////////////////////////
+		// 		Inserir movimento no RM		 //
+		///////////////////////////////////////
+		
 		try { 
 			
             // Criar o objeto de Integracao
@@ -102,7 +138,9 @@ function ProcessamentoWorkflow(){
             var dataServerName = "MovMovimentoTBCData";
             var contexto = "CODCOLIGADA=1;CODUSUARIO=integracao;CODSISTEMA=T";
             
-            // Direcionando para movimento 1.1.60 - Produto ou 1.1.80 - Serviço
+    		//////////////////////////////////////////////////////////////////////////
+            // 	Direcionando para movimento 1.1.61 - Produto ou 1.1.81 - Serviço	//
+    		//////////////////////////////////////////////////////////////////////////
             if (grupoprd == '09.') {
             	var XML = GetXmlServico();
             }
@@ -140,26 +178,47 @@ function ProcessamentoWorkflow(){
 		log.info("CUSTOM: GetXmlServico - inicio");
 		var XML;
 		
-		// Coletando informações do form para XML
+
+        /////////////////////////////////////////////////////
+        //	 Coletando informações do form para XML		  //
+        /////////////////////////////////////////////////////
 		var IDFLUIG = getValue('WKNumProces');
 		var SOLICITANTE = hAPI.getCardValue("solicitante");
 		var CODFILIAL = (hAPI.getCardValue("filial")).substring(0,1);
         var CODCCUSTO = (hAPI.getCardValue("ccusto")).substring(0,17);
         var HOJE = new Date().toISOString().slice(0,19); // Formato ""+DTDESPESAFORMAT+"T22:34:02"
-        var HISTORICO = "SOLICITAÇÃO FLUIG : "+IDFLUIG+" - "+"SOLICITANTE : "+SOLICITANTE.toUpperCase()+" - "+ (hAPI.getCardValue("observacaoMov")).toUpperCase();
+        var HISTORICO_temp = "SOLICITAÇÃO FLUIG : "+IDFLUIG+" - "+"SOLICITANTE : "+SOLICITANTE.toUpperCase()+" - "+ (hAPI.getCardValue("observacaoMov")).toUpperCase();
+        var HISTORICO = ((((HISTORICO_temp.replace("&","")).replace("<","")).replace(">","")).replace("|","")).replace("+","");
         //var HISTORICO = "Solicitação Fluig : "+IDFLUIG+" - "+(hAPI.getCardValue("observacaoMov"));
         
+        /////////////////////////////////////////////////////
+        //				ATRIBUINDO COMPRADOR			  //
+        /////////////////////////////////////////////////////
+        var CODVEN ='';
+        var COMPRADOR = hAPI.getCardValue("comprador");
+        var datasetComprador = DatasetFactory.getDataset("_RM_COMPRADORES", null, null, null);
+        
+        for (var i = 0; i < datasetComprador.rowsCount; i++) {
+        	var usuComprador = datasetComprador.getValue(i, "CODUSUARIO"); 
+        	if (usuComprador == COMPRADOR) {
+        		CODVEN = datasetComprador.getValue(i, "CODVEN");
+        	}
+        }
+        
+
+        //////////////////////////////////////////////////////////////////
+        //	CALCULANDO QUANTIDADE TOTAL E VALOR TOTAL PARA O MOVIMENTO	//
+        //////////////////////////////////////////////////////////////////
 		var QTD_MOVIMENTO_temp = 0;
 		var VALOR_MOVIMENTO_temp = 0;
-        
-        // CALCULANDO QUANTIDADE TOTAL E VALOR TOTAL PARA O MOVIMENTO//
 		var indexes = hAPI.getChildrenIndexes("tbProdutos");
 		for (var i = 0; i < indexes.length; i++) {
 			var qtd_item = (hAPI.getCardValue("quantidade___" + indexes[i]));
 			QTD_MOVIMENTO_temp = parseInt(QTD_MOVIMENTO_temp) + parseInt(qtd_item);
 			var valor_item_temp = (hAPI.getCardValue("valorUnitario___" + indexes[i]));
 			var valor_itemAjustado = ((((valor_item_temp.replace(".","")).replace(',','.')).replace("R$","")).replace("$","")).replace(" ","");
-			var valor_totalItem = (qtd_item * parseFloat(valor_itemAjustado));
+			var valor_totalItem = (hAPI.getCardValue("valorTotal___" + indexes[i])).replace(',','.');
+			//var valor_totalItem = (qtd_item * parseFloat(valor_itemAjustado));
 			VALOR_MOVIMENTO_temp = VALOR_MOVIMENTO_temp + valor_totalItem;
 			
 		}
@@ -169,7 +228,10 @@ function ProcessamentoWorkflow(){
         var QTD_MOVIMENTO = (QTD_MOVIMENTO_temp.toString());
         
         
-        // Estruturando XML
+        
+        /////////////////////////////////////////        
+        ////	 Estruturando XML        ////////
+        /////////////////////////////////////////
 		XML = "<MovMovimento >" +   
 		" <TMOV>	"  + 
 		" <CODCOLIGADA>1</CODCOLIGADA>	"  + 
@@ -178,9 +240,9 @@ function ProcessamentoWorkflow(){
 		" <CODLOC>0"+CODFILIAL+"</CODLOC>	"  + 
 		" <CODLOCDESTINO>0"+CODFILIAL+"</CODLOCDESTINO>	"  + 
 		" <NUMEROMOV>0</NUMEROMOV>	"  + 
-		" <SERIE>PDS</SERIE>	"  + 
-		" <CODTMV>1.1.80</CODTMV>	"  + 
-		" <TIPO>P</TIPO>	"  + 
+		" <SERIE>PDSA</SERIE>	"  + 
+		" <CODTMV>1.1.81</CODTMV>	"  + 
+		" <TIPO>S</TIPO>	"  + 
 		" <STATUS>A</STATUS>	"  + 
 		" <MOVIMPRESSO>0</MOVIMPRESSO>	"  + 
 		" <DOCIMPRESSO>0</DOCIMPRESSO>	"  + 
@@ -190,7 +252,7 @@ function ProcessamentoWorkflow(){
 		" <COMISSAOREPRES>0.0000</COMISSAOREPRES>	"  + 
 		" <VALORBRUTO>"+VALOR_MOVIMENTO+"</VALORBRUTO>	"  + 
 		" <VALORLIQUIDO>"+VALOR_MOVIMENTO+"</VALORLIQUIDO>	"  +
-		" <CODTB3FAT>000</CODTB3FAT>	"  + 
+		" <CODTB1FLX>01.000</CODTB1FLX>	"  + 
 		" <VALOROUTROS>0.0000</VALOROUTROS>	"  + 
 		" <PERCENTUALFRETE>0.0000</PERCENTUALFRETE>	"  + 
 		" <VALORFRETE>0.0000</VALORFRETE>	"  + 
@@ -208,6 +270,7 @@ function ProcessamentoWorkflow(){
 		" <DATAMOVIMENTO>"+HOJE+"</DATAMOVIMENTO>	"  + 
 		" <GEROUFATURA>0</GEROUFATURA>	"  + 
 		" <CODCCUSTO>"+CODCCUSTO+"</CODCCUSTO>	"  + 
+		" <CODVEN1>"+CODVEN+"</CODVEN1>	"  +
 		" <PERCCOMISSAOVEN2>0.0000</PERCCOMISSAOVEN2>	"  + 
 		" <CODUSUARIO>"+SOLICITANTE+"</CODUSUARIO>	"  + 
 		" <CODFILIALDESTINO>"+CODFILIAL+"</CODFILIALDESTINO>	"  + 
@@ -257,11 +320,46 @@ function ProcessamentoWorkflow(){
 		" <STATUSMOVINCLUSAOCOLAB>0</STATUSMOVINCLUSAOCOLAB>	"  + 
 		" <CODCOLIGADA1>1</CODCOLIGADA1>	"  + 
 		" <IDMOVHST>-1</IDMOVHST>	"  + 
-		"	  </TMOV>	"  
+		"	  </TMOV>	"  ;
 
+		XML = XML + "<TNFE>	" +
+	    " <CODCOLIGADA>1</CODCOLIGADA>	"	+
+	    " <IDMOV>-1</IDMOV>	"	+
+	    " <VALORSERVICO>0.0000</VALORSERVICO>	"  +
+	    " <DEDUCAOSERVICO>0.0000</DEDUCAOSERVICO>	"  +
+	    " <ALIQUOTAISS>0.0000</ALIQUOTAISS>	"  +
+	    " <ISSRETIDO>0</ISSRETIDO>	"  +
+	    " <VALORISS>0.0000</VALORISS>	"  +
+	    " <VALORCREDITOIPTU>0.0000</VALORCREDITOIPTU>	"  +
+	    " <BASEDECALCULO>0.0000</BASEDECALCULO>	"  +
+	    " <EDITADO>0</EDITADO>	"  +
+		" <RECCREATEDBY>"+SOLICITANTE+"</RECCREATEDBY>	"  + 
+		" <RECCREATEDON>"+HOJE+"</RECCREATEDON>	"  + 
+		" <RECMODIFIEDBY>"+SOLICITANTE+"</RECMODIFIEDBY>	"  + 
+		" <RECMODIFIEDON>"+HOJE+"</RECMODIFIEDON>	"  + 
+			" </TNFE>	"  +
+			" <TMOVFISCAL>		"  +
+	    " <CODCOLIGADA>1</CODCOLIGADA>	"  +
+	    " <IDMOV>-1</IDMOV>	"  +	
+	    " <CONTRIBUINTECREDENCIADO>0</CONTRIBUINTECREDENCIADO>	"  +
+	    " <OPERACAOPRESENCIAL>0</OPERACAOPRESENCIAL>	"  +
+		" <RECCREATEDBY>"+SOLICITANTE+"</RECCREATEDBY>	"  + 
+		" <RECCREATEDON>"+HOJE+"</RECCREATEDON>	"  + 
+		" <RECMODIFIEDBY>"+SOLICITANTE+"</RECMODIFIEDBY>	"  + 
+		" <RECMODIFIEDON>"+HOJE+"</RECMODIFIEDON>	"  + 
+			" </TMOVFISCAL>	"  +
+			" <TMOVRATCCU>	"  +
+		" <CODCOLIGADA>1</CODCOLIGADA>	"  +
+		" <IDMOV>-1</IDMOV>	"  +
+		" <CODCCUSTO>"+CODCCUSTO+"</CODCCUSTO>	"  + 
+		" <VALOR>"+VALOR_MOVIMENTO+"</VALOR>	"  +
+		" <IDMOVRATCCU>-1</IDMOVRATCCU>	"  +
+			" </TMOVRATCCU>	";
 		
-
-		// COLETA DE INFORMAÇÕES DO ZOOM nomeItem //
+		
+        //////////////////////////////////////////////
+        //	COLETA DE INFORMAÇÕES DO ZOOM nomeItem	//
+        //////////////////////////////////////////////
 		var indexes = hAPI.getChildrenIndexes("tbProdutos");
 		for (var i = 0; i < indexes.length; i++) {
 			var NSEQITMMOV = i+1;
@@ -294,7 +392,7 @@ function ProcessamentoWorkflow(){
 	        // Para gravação o valorbruto retorna ao formato com ","
 	        var valorTotalItem = (valorTotalItem_temp.toString()).replace('.',',');
 			var valorUnitarioAjustado = (valorUnitario_temp.toString()).replace('.',',');
-	        
+			
 			var observacaoItem = (hAPI.getCardValue("observacaoItem___" + indexes[i]));
 			log.info("==========[ getChildrenIndexes observacaoItem ]========== " + observacaoItem);
 			
@@ -386,27 +484,46 @@ function ProcessamentoWorkflow(){
 		
 		log.info("CUSTOM: GetXmlProduto - inicio");
 		var XML;
-		
-		// Coletando informações do form para XML
+
+        /////////////////////////////////////////////////////
+        //	 Coletando informações do form para XML		  //
+        /////////////////////////////////////////////////////
 		var IDFLUIG = getValue('WKNumProces');
 		var SOLICITANTE = hAPI.getCardValue("solicitante");
 		var CODFILIAL = (hAPI.getCardValue("filial")).substring(0,1);
         var CODCCUSTO = (hAPI.getCardValue("ccusto")).substring(0,17);
         var HOJE = new Date().toISOString().slice(0,19); // Formato ""+DTDESPESAFORMAT+"T22:34:02"
-        var HISTORICO = "SOLICITAÇÃO FLUIG : "+IDFLUIG+" - "+"SOLICITANTE : "+SOLICITANTE.toUpperCase()+" - "+ (hAPI.getCardValue("observacaoMov")).toUpperCase();
+        var HISTORICO_temp = "SOLICITAÇÃO FLUIG : "+IDFLUIG+" - "+"SOLICITANTE : "+SOLICITANTE.toUpperCase()+" - "+ (hAPI.getCardValue("observacaoMov")).toUpperCase();
+        var HISTORICO = ((((HISTORICO_temp.replace("&","")).replace("<","")).replace(">","")).replace("|","")).replace("+","");
         //var HISTORICO = "Solicitação Fluig : "+IDFLUIG+" - "+(hAPI.getCardValue("observacaoMov"));
         
+        /////////////////////////////////////////////////////
+        //				ATRIBUINDO COMPRADOR			  //
+        /////////////////////////////////////////////////////
+        var CODVEN ='';
+        var COMPRADOR = hAPI.getCardValue("comprador");
+        var datasetComprador = DatasetFactory.getDataset("_RM_COMPRADORES", null, null, null);
+        
+        for (var i = 0; i < datasetComprador.rowsCount; i++) {
+        	var usuComprador = datasetComprador.getValue(i, "CODUSUARIO"); 
+        	if (usuComprador == COMPRADOR) {
+        		CODVEN = datasetComprador.getValue(i, "CODVEN");
+        	}
+        }
+
+        //////////////////////////////////////////////////////////////////
+        //	CALCULANDO QUANTIDADE TOTAL E VALOR TOTAL PARA O MOVIMENTO	//
+        //////////////////////////////////////////////////////////////////
 		var QTD_MOVIMENTO_temp = 0;
 		var VALOR_MOVIMENTO_temp = 0;
-        
-        // CALCULANDO QUANTIDADE TOTAL E VALOR TOTAL PARA O MOVIMENTO//
 		var indexes = hAPI.getChildrenIndexes("tbProdutos");
 		for (var i = 0; i < indexes.length; i++) {
 			var qtd_item = (hAPI.getCardValue("quantidade___" + indexes[i]));
 			QTD_MOVIMENTO_temp = parseInt(QTD_MOVIMENTO_temp) + parseInt(qtd_item);
 			var valor_item_temp = (hAPI.getCardValue("valorUnitario___" + indexes[i]));
 			var valor_itemAjustado = ((((valor_item_temp.replace(".","")).replace(',','.')).replace("R$","")).replace("$","")).replace(" ","");
-			var valor_totalItem = (qtd_item * parseFloat(valor_itemAjustado));
+			var valor_totalItem = (hAPI.getCardValue("valorTotal___" + indexes[i])).replace(',','.');
+			//var valor_totalItem = (qtd_item * parseFloat(valor_itemAjustado));
 			VALOR_MOVIMENTO_temp = VALOR_MOVIMENTO_temp + valor_totalItem;
 			
 		}
@@ -415,8 +532,9 @@ function ProcessamentoWorkflow(){
         var VALOR_MOVIMENTO = (VALOR_MOVIMENTO_temp.toString()).replace('.',',');        
         var QTD_MOVIMENTO = (QTD_MOVIMENTO_temp.toString());
         
-        
-        // Estruturando XML
+        /////////////////////////////////////////        
+        ////	 Estruturando XML        ////////
+        /////////////////////////////////////////
 		XML = "<MovMovimento >" +   
 		" <TMOV>	"  + 
 		" <CODCOLIGADA>1</CODCOLIGADA>	"  + 
@@ -425,8 +543,8 @@ function ProcessamentoWorkflow(){
 		" <CODLOC>0"+CODFILIAL+"</CODLOC>	"  + 
 		" <CODLOCDESTINO>0"+CODFILIAL+"</CODLOCDESTINO>	"  + 
 		" <NUMEROMOV>0</NUMEROMOV>	"  + 
-		" <SERIE>PDC</SERIE>	"  + 
-		" <CODTMV>1.1.60</CODTMV>	"  + 
+		" <SERIE>PDCA</SERIE>	"  + 
+		" <CODTMV>1.1.61</CODTMV>	"  + 
 		" <TIPO>P</TIPO>	"  + 
 		" <STATUS>A</STATUS>	"  + 
 		" <MOVIMPRESSO>0</MOVIMPRESSO>	"  + 
@@ -437,7 +555,7 @@ function ProcessamentoWorkflow(){
 		" <COMISSAOREPRES>0.0000</COMISSAOREPRES>	"  + 
 		" <VALORBRUTO>"+VALOR_MOVIMENTO+"</VALORBRUTO>	"  + 
 		" <VALORLIQUIDO>"+VALOR_MOVIMENTO+"</VALORLIQUIDO>	"  +
-		" <CODTB3FAT>000</CODTB3FAT>	"  + 
+		" <CODTB1FLX>01.001</CODTB1FLX>	"  + 
 		" <VALOROUTROS>0.0000</VALOROUTROS>	"  + 
 		" <PERCENTUALFRETE>0.0000</PERCENTUALFRETE>	"  + 
 		" <VALORFRETE>0.0000</VALORFRETE>	"  + 
@@ -455,6 +573,7 @@ function ProcessamentoWorkflow(){
 		" <DATAMOVIMENTO>"+HOJE+"</DATAMOVIMENTO>	"  + 
 		" <GEROUFATURA>0</GEROUFATURA>	"  + 
 		" <CODCCUSTO>"+CODCCUSTO+"</CODCCUSTO>	"  + 
+		" <CODVEN1>"+CODVEN+"</CODVEN1>	"  +
 		" <PERCCOMISSAOVEN2>0.0000</PERCCOMISSAOVEN2>	"  + 
 		" <CODUSUARIO>"+SOLICITANTE+"</CODUSUARIO>	"  + 
 		" <CODFILIALDESTINO>"+CODFILIAL+"</CODFILIALDESTINO>	"  + 
@@ -504,11 +623,46 @@ function ProcessamentoWorkflow(){
 		" <STATUSMOVINCLUSAOCOLAB>0</STATUSMOVINCLUSAOCOLAB>	"  + 
 		" <CODCOLIGADA1>1</CODCOLIGADA1>	"  + 
 		" <IDMOVHST>-1</IDMOVHST>	"  + 
-		"	  </TMOV>	"  
+		"	  </TMOV>	"  ;
 
+		XML = XML + "<TNFE>	" +
+	    " <CODCOLIGADA>1</CODCOLIGADA>	"	+
+	    " <IDMOV>-1</IDMOV>	"	+
+	    " <VALORSERVICO>0.0000</VALORSERVICO>	"  +
+	    " <DEDUCAOSERVICO>0.0000</DEDUCAOSERVICO>	"  +
+	    " <ALIQUOTAISS>0.0000</ALIQUOTAISS>	"  +
+	    " <ISSRETIDO>0</ISSRETIDO>	"  +
+	    " <VALORISS>0.0000</VALORISS>	"  +
+	    " <VALORCREDITOIPTU>0.0000</VALORCREDITOIPTU>	"  +
+	    " <BASEDECALCULO>0.0000</BASEDECALCULO>	"  +
+	    " <EDITADO>0</EDITADO>	"  +
+		" <RECCREATEDBY>"+SOLICITANTE+"</RECCREATEDBY>	"  + 
+		" <RECCREATEDON>"+HOJE+"</RECCREATEDON>	"  + 
+		" <RECMODIFIEDBY>"+SOLICITANTE+"</RECMODIFIEDBY>	"  + 
+		" <RECMODIFIEDON>"+HOJE+"</RECMODIFIEDON>	"  + 
+		" </TNFE>	"  +
+		" <TMOVFISCAL>		"  +
+	    " <CODCOLIGADA>1</CODCOLIGADA>	"  +
+	    " <IDMOV>-1</IDMOV>	"  +	
+	    " <CONTRIBUINTECREDENCIADO>0</CONTRIBUINTECREDENCIADO>	"  +
+	    " <OPERACAOPRESENCIAL>0</OPERACAOPRESENCIAL>	"  +
+		" <RECCREATEDBY>"+SOLICITANTE+"</RECCREATEDBY>	"  + 
+		" <RECCREATEDON>"+HOJE+"</RECCREATEDON>	"  + 
+		" <RECMODIFIEDBY>"+SOLICITANTE+"</RECMODIFIEDBY>	"  + 
+		" <RECMODIFIEDON>"+HOJE+"</RECMODIFIEDON>	"  + 
+		" </TMOVFISCAL>	"  +
+		" <TMOVRATCCU>	"  +
+		" <CODCOLIGADA>1</CODCOLIGADA>	"  +
+		" <IDMOV>-1</IDMOV>	"  +
+		" <CODCCUSTO>"+CODCCUSTO+"</CODCCUSTO>	"  + 
+		" <VALOR>"+VALOR_MOVIMENTO+"</VALOR>	"  +
+		" <IDMOVRATCCU>-1</IDMOVRATCCU>	"  +
+		" </TMOVRATCCU>	";
 		
-
-		// COLETA DE INFORMAÇÕES DO ZOOM nomeItem //
+		
+        //////////////////////////////////////////////
+        //	COLETA DE INFORMAÇÕES DO ZOOM nomeItem	//
+        //////////////////////////////////////////////
 		var indexes = hAPI.getChildrenIndexes("tbProdutos");
 		for (var i = 0; i < indexes.length; i++) {
 			var NSEQITMMOV = i+1;
