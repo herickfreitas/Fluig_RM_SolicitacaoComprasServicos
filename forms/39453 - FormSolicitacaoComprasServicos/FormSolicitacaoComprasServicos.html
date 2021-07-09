@@ -251,7 +251,16 @@ $("#btn_addProduto").on("click", function(e){
       }
       i++;
     }
-    recarregazoom (numeroFilial,grupoItem, linha);
+
+    //Verificando usuario solicitante.
+    var usuarioSolicitante = document.getElementById("solicitante").value;
+    
+    // Formatando em minúsculo
+    var codusuario = usuarioSolicitante.toLowerCase();
+    console.log("codusuario: "+codusuario );
+	
+    // Filtando itens
+    recarregazoom (numeroFilial,grupoItem, linha, codusuario);
   
     // Restringindo a alteração após adicionar iten
     window["filial"].disable(true);

@@ -5,7 +5,7 @@ function createDataset(fields, constraints, sortFields) {
     var ds = ic.lookup(dataSource);
     var created = false;
     
-    log.info("QUERY constraints: " + constraints);
+    log.info("QUERY _RM_ITENS_COMPRA constraints: " + constraints);
     
     var processo = "";
     for (var i = 0; i < constraints.length; i++) {
@@ -20,11 +20,26 @@ function createDataset(fields, constraints, sortFields) {
         	grupoItem = constraints[i].initialValue;    
         }
     }
+
+    var codusuario = "";
+    for (var i = 0; i < constraints.length; i++) {
+        if (constraints[i].fieldName == 'CODUSUARIO') {
+        	codusuario = constraints[i].initialValue;    
+        }
+    }
     
-    if (grupoItem == "") {
+    
+    if (grupoItem == "" && (codusuario == 'flaviaalves' || codusuario == 'camilaribas')) {
     	
     	var myQuery = "SELECT * FROM _Fluig_ITENS_COMPRA WHERE CODFILIAL = "+"'"+processo+"'";
     }
+    
+    
+    else if (grupoItem == "" && (codusuario != 'flaviaalves' || codusuario != 'camilaribas')) {
+    	
+    	var myQuery = "SELECT * FROM _Fluig_ITENS_COMPRA WHERE CODIGOPRD NOT LIKE '05.%' AND CODFILIAL = "+"'"+processo+"'";
+    }
+    
     
     else {
     	grupoItem = grupoItem+"%";
@@ -33,7 +48,7 @@ function createDataset(fields, constraints, sortFields) {
 	
     
 	
-    log.info("QUERY: " + myQuery);
+    log.info("QUERY _RM_ITENS_COMPRA: " + myQuery);
     try {
         var conn = ds.getConnection();
         var stmt = conn.createStatement();

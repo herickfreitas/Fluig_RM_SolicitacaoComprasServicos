@@ -1,11 +1,14 @@
 
-function recarregazoom(filial, grupoItem , linha){
+function recarregazoom(filial, grupoItem , linha, codusuario){
+
 
 	// Efetuando filtro na seleção de itens conforme a filial informada.
 	var codFilial = filial;
 	var grupo = grupoItem;
+	var usuario = codusuario;
+
 	//Preparação do filtro 
-	var filterValues = "CODFILIAL," + codFilial+','+"GRUPOITEM,"+grupo;
+	var filterValues = "CODFILIAL," + codFilial+','+"GRUPOITEM,"+grupo+','+"CODUSUARIO,"+usuario;
 	console.log("filterValues: "+filterValues );
 	reloadZoomFilterValues('nomeItem___'+linha, filterValues );
 }
