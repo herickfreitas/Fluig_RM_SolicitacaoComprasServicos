@@ -27,15 +27,15 @@ function createDataset(fields, constraints, sortFields) {
         	codusuario = constraints[i].initialValue;    
         }
     }
+    //@cnc.org.br
     
-    
-    if (grupoItem == "" && (codusuario == 'flaviaalves' || codusuario == 'camilaribas')) {
+    if (grupoItem == "" && (codusuario == 'flaviaalves' || codusuario == 'camilaribas'   || codusuario == 'deisesouza')) {
     	
     	var myQuery = "SELECT * FROM _Fluig_ITENS_COMPRA WHERE CODFILIAL = "+"'"+processo+"'";
     }
     
     
-    else if (grupoItem == "" && (codusuario != 'flaviaalves' || codusuario != 'camilaribas')) {
+    else if (grupoItem == "" && (codusuario != 'flaviaalves' || codusuario != 'camilaribas'  || codusuario != 'deisesouza')) {
     	
     	var myQuery = "SELECT * FROM _Fluig_ITENS_COMPRA WHERE CODIGOPRD NOT LIKE '05.%' AND CODFILIAL = "+"'"+processo+"'";
     }

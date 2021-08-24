@@ -15,51 +15,51 @@
       </children>
     </children>
     <children xsi:type="pi:ContainerShape" visible="true" active="true">
-      <graphicsAlgorithm xsi:type="al:Rectangle" background="/0/@colors.6" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" width="481" height="117" x="390" y="400" style="/0/@styles.7"/>
-      <link businessObjects="bpmnswimlane2"/>
+      <graphicsAlgorithm xsi:type="al:Rectangle" background="/0/@styles.11/@renderingStyle/@adaptedGradientColoredAreas/@adaptedGradientColoredAreas.0/@gradientColor.2/@end/@color" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" width="869" height="148" x="2" y="133" style="/0/@styles.7"/>
+      <link businessObjects="bpmnswimlane3"/>
       <anchors xsi:type="pi:ChopboxAnchor"/>
       <anchors xsi:type="pi:ChopboxAnchor"/>
       <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" referencedGraphicsAlgorithm="/0/@children.1/@graphicsAlgorithm" relativeWidth="1.0" relativeHeight="0.51">
         <graphicsAlgorithm xsi:type="al:Ellipse" filled="false" lineVisible="false"/>
       </anchors>
       <children visible="true">
-        <graphicsAlgorithm xsi:type="al:Text" lineWidth="1" filled="false" lineVisible="true" transparency="0.0" width="30" height="117" style="/0/@styles.8" font="/0/@fonts.1" horizontalAlignment="ALIGNMENT_CENTER" verticalAlignment="ALIGNMENT_MIDDLE" angle="270" value="Reprovar" rotation="270.0"/>
+        <graphicsAlgorithm xsi:type="al:Text" lineWidth="1" filled="false" lineVisible="true" transparency="0.0" width="30" height="148" style="/0/@styles.8" font="/0/@fonts.1" horizontalAlignment="ALIGNMENT_CENTER" verticalAlignment="ALIGNMENT_MIDDLE" angle="270" value="Gestores" rotation="270.0"/>
       </children>
     </children>
     <children xsi:type="pi:ContainerShape" visible="true" active="true">
-      <graphicsAlgorithm xsi:type="al:Rectangle" background="/0/@colors.5" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" width="868" height="121" x="3" y="280" style="/0/@styles.5"/>
-      <link businessObjects="bpmnswimlane5"/>
+      <graphicsAlgorithm xsi:type="al:Rectangle" background="/0/@colors.6" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" width="481" height="117" x="390" y="400" style="/0/@styles.5"/>
+      <link businessObjects="bpmnswimlane2"/>
       <anchors xsi:type="pi:ChopboxAnchor"/>
       <anchors xsi:type="pi:ChopboxAnchor"/>
       <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" referencedGraphicsAlgorithm="/0/@children.2/@graphicsAlgorithm" relativeWidth="1.0" relativeHeight="0.51">
         <graphicsAlgorithm xsi:type="al:Ellipse" filled="false" lineVisible="false"/>
       </anchors>
       <children visible="true">
-        <graphicsAlgorithm xsi:type="al:Text" lineWidth="1" filled="false" lineVisible="true" transparency="0.0" width="30" height="121" style="/0/@styles.6" font="/0/@fonts.1" horizontalAlignment="ALIGNMENT_CENTER" verticalAlignment="ALIGNMENT_MIDDLE" angle="270" value="GSP" rotation="270.0"/>
+        <graphicsAlgorithm xsi:type="al:Text" lineWidth="1" filled="false" lineVisible="true" transparency="0.0" width="30" height="117" style="/0/@styles.6" font="/0/@fonts.1" horizontalAlignment="ALIGNMENT_CENTER" verticalAlignment="ALIGNMENT_MIDDLE" angle="270" value="Reprovar" rotation="270.0"/>
       </children>
     </children>
     <children xsi:type="pi:ContainerShape" visible="true" active="true">
-      <graphicsAlgorithm xsi:type="al:Rectangle" background="/0/@styles.11/@renderingStyle/@adaptedGradientColoredAreas/@adaptedGradientColoredAreas.0/@gradientColor.2/@end/@color" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" width="869" height="134" x="2" style="/0/@styles.3"/>
-      <link businessObjects="bpmnswimlane1"/>
+      <graphicsAlgorithm xsi:type="al:Rectangle" background="/0/@colors.5" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" width="868" height="121" x="3" y="280" style="/0/@styles.3"/>
+      <link businessObjects="bpmnswimlane5"/>
       <anchors xsi:type="pi:ChopboxAnchor"/>
       <anchors xsi:type="pi:ChopboxAnchor"/>
       <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" referencedGraphicsAlgorithm="/0/@children.3/@graphicsAlgorithm" relativeWidth="1.0" relativeHeight="0.51">
         <graphicsAlgorithm xsi:type="al:Ellipse" filled="false" lineVisible="false"/>
       </anchors>
       <children visible="true">
-        <graphicsAlgorithm xsi:type="al:Text" lineWidth="1" filled="false" lineVisible="true" transparency="0.0" width="30" height="134" style="/0/@styles.4" font="/0/@fonts.1" horizontalAlignment="ALIGNMENT_CENTER" verticalAlignment="ALIGNMENT_MIDDLE" angle="270" value="Solicitante" rotation="270.0"/>
+        <graphicsAlgorithm xsi:type="al:Text" lineWidth="1" filled="false" lineVisible="true" transparency="0.0" width="30" height="121" style="/0/@styles.4" font="/0/@fonts.1" horizontalAlignment="ALIGNMENT_CENTER" verticalAlignment="ALIGNMENT_MIDDLE" angle="270" value="GSP" rotation="270.0"/>
       </children>
     </children>
     <children xsi:type="pi:ContainerShape" visible="true" active="true">
-      <graphicsAlgorithm xsi:type="al:Rectangle" background="/0/@styles.11/@renderingStyle/@adaptedGradientColoredAreas/@adaptedGradientColoredAreas.0/@gradientColor.2/@end/@color" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" width="869" height="148" x="2" y="133" style="/0/@styles.0"/>
-      <link businessObjects="bpmnswimlane3"/>
+      <graphicsAlgorithm xsi:type="al:Rectangle" background="/0/@styles.11/@renderingStyle/@adaptedGradientColoredAreas/@adaptedGradientColoredAreas.0/@gradientColor.2/@end/@color" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" width="869" height="134" x="2" style="/0/@styles.0"/>
+      <link businessObjects="bpmnswimlane1"/>
       <anchors xsi:type="pi:ChopboxAnchor"/>
       <anchors xsi:type="pi:ChopboxAnchor"/>
       <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" referencedGraphicsAlgorithm="/0/@children.4/@graphicsAlgorithm" relativeWidth="1.0" relativeHeight="0.51">
         <graphicsAlgorithm xsi:type="al:Ellipse" filled="false" lineVisible="false"/>
       </anchors>
       <children visible="true">
-        <graphicsAlgorithm xsi:type="al:Text" lineWidth="1" filled="false" lineVisible="true" transparency="0.0" width="30" height="148" style="/0/@styles.2" font="/0/@fonts.1" horizontalAlignment="ALIGNMENT_CENTER" verticalAlignment="ALIGNMENT_MIDDLE" angle="270" value="Gestores" rotation="270.0"/>
+        <graphicsAlgorithm xsi:type="al:Text" lineWidth="1" filled="false" lineVisible="true" transparency="0.0" width="30" height="134" style="/0/@styles.2" font="/0/@fonts.1" horizontalAlignment="ALIGNMENT_CENTER" verticalAlignment="ALIGNMENT_MIDDLE" angle="270" value="Solicitante" rotation="270.0"/>
       </children>
     </children>
     <children xsi:type="pi:ContainerShape" visible="true" active="true">
@@ -1601,10 +1601,10 @@
     <fonts name="Arial" size="8"/>
     <fonts name="Arial" size="8" bold="true"/>
   </pi:Diagram>
-  <bpmn2:BpmnSwimLane id="bpmnswimlane3" name="Gestores" cores="FFFFFF"/>
   <bpmn2:BpmnSwimLane id="bpmnswimlane1" name="Solicitante" cores="FFFFFF"/>
   <bpmn2:BpmnSwimLane id="bpmnswimlane5" name="GSP" cores="FFFF80"/>
   <bpmn2:BpmnSwimLane id="bpmnswimlane2" name="Reprovar" cores="82b0b7"/>
+  <bpmn2:BpmnSwimLane id="bpmnswimlane3" name="Gestores" cores="FFFFFF"/>
   <bpmn2:BpmnSwimLane id="bpmnswimlane4" name="Aprovar" cores="A7FCC0"/>
   <bpmn2:BpmnStartEvent id="startevent2" name="In&#xed;cio" outgoing="flow166" type="10" extendedFields="&lt;list/>" signalId="0" initializerConfiguration="&lt;org.eclipse.bpmn2.impl.AssignmentControllerGroup>&#xA;  &lt;groupId>Interno&lt;/groupId>&#xA;  &lt;mechanismName>Grupo&lt;/mechanismName>&#xA;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerGroup>" expediente="Expediente_CNC_10as19" atividadeConjunta="true" selecionaColaboradores="1" notificaResponsavel="true" esforcoCalculo="0"/>
   <bpmn2:BpmnEndEvent id="endevent8" name="Aprovar" incoming="flow202" type="60" extendedFields="&lt;list/>" signalId="0" notificaRequisitante="true"/>
@@ -1615,7 +1615,7 @@
   <bpmn2:BpmnTask id="task180" name="Solicitante - Ajustar solicita&#xe7;&#xe3;o" incoming="flow190" outgoing="flow184 flow191" type="80" extendedFields="&lt;list/>" managerMechanism="Campo Formul&#xe1;rio" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerFormField>&#xA;  &lt;formField>solicitante&lt;/formField>&#xA;  &lt;mechanismName>Campo Formul&#xe1;rio&lt;/mechanismName>&#xA;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerFormField>" loopType="0" authNotify="true" expediente="Expediente_CNC_10as19" prazoConclusao="60.0" inibeOpcaoTransferir="true" selecionaColaboradores="1" esforcoCalculo="0" executionAttempts="0" frequency="0" appsConfiguration="&lt;map>&#xA;  &lt;entry>&#xA;    &lt;string>approval&lt;/string>&#xA;    &lt;list>&#xA;      &lt;org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;        &lt;appField>title&lt;/appField>&#xA;        &lt;description>Solicita&#xe7;&#xe3;o de Compras/Servi&#xe7;os&lt;/description>&#xA;      &lt;/org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;      &lt;org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;        &lt;appField>description&lt;/appField>&#xA;        &lt;description>@[form:observacaoMov]&amp;#xd;&#xA;&lt;/description>&#xA;      &lt;/org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;      &lt;org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;        &lt;appField>approve&lt;/appField>&#xA;        &lt;description>172&lt;/description>&#xA;      &lt;/org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;      &lt;org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;        &lt;appField>reject&lt;/appField>&#xA;        &lt;description>134&lt;/description>&#xA;      &lt;/org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;    &lt;/list>&#xA;  &lt;/entry>&#xA;&lt;/map>"/>
   <bpmn2:BpmnTask id="task195" name="Aprovado - Encaminhar Designador" incoming="flow196" outgoing="flow200" type="80" extendedFields="&lt;list/>" managerMechanism="Campo Formul&#xe1;rio" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerFormField>&#xA;  &lt;formField>designador&lt;/formField>&#xA;  &lt;mechanismName>Campo Formul&#xe1;rio&lt;/mechanismName>&#xA;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerFormField>" loopType="0" authNotify="true" expediente="Expediente_CNC_10as19" inibeOpcaoTransferir="true" selecionaColaboradores="1" esforcoCalculo="0" executionAttempts="0" frequency="0" appsConfiguration="&lt;map>&#xA;  &lt;entry>&#xA;    &lt;string>approval&lt;/string>&#xA;    &lt;list>&#xA;      &lt;org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;        &lt;appField>title&lt;/appField>&#xA;        &lt;description>Solicita&#xe7;&#xe3;o de Compras/Servi&#xe7;os&lt;/description>&#xA;      &lt;/org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;      &lt;org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;        &lt;appField>description&lt;/appField>&#xA;        &lt;description>@[form:observacaoMov]&lt;/description>&#xA;      &lt;/org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;      &lt;org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;        &lt;appField>approve&lt;/appField>&#xA;        &lt;description>199&lt;/description>&#xA;      &lt;/org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;    &lt;/list>&#xA;  &lt;/entry>&#xA;&lt;/map>"/>
   <bpmn2:BpmnTask id="task199" name="Selecionar Comprador" incoming="flow200" outgoing="flow202" type="80" extendedFields="&lt;list/>" managerMechanism="Campo Formul&#xe1;rio" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerFormField>&#xA;  &lt;formField>comprador&lt;/formField>&#xA;  &lt;mechanismName>Campo Formul&#xe1;rio&lt;/mechanismName>&#xA;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerFormField>" loopType="0" authNotify="true" expediente="Expediente_CNC_10as19" inibeOpcaoTransferir="true" selecionaColaboradores="1" esforcoCalculo="0" executionAttempts="0" frequency="0" appsConfiguration="&lt;map>&#xA;  &lt;entry>&#xA;    &lt;string>approval&lt;/string>&#xA;    &lt;list>&#xA;      &lt;org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;        &lt;appField>title&lt;/appField>&#xA;        &lt;description>Solicita&#xe7;&#xe3;o de Compras/Servi&#xe7;os&lt;/description>&#xA;      &lt;/org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;      &lt;org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;        &lt;appField>description&lt;/appField>&#xA;        &lt;description>@[form:observacaoMov]&lt;/description>&#xA;      &lt;/org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;      &lt;org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;        &lt;appField>approve&lt;/appField>&#xA;        &lt;description>8&lt;/description>&#xA;      &lt;/org.eclipse.bpmn2.documentacional.BpmnProcessAppConfiguration>&#xA;    &lt;/list>&#xA;  &lt;/entry>&#xA;&lt;/map>"/>
-  <bpmn2:BpmnProcess id="SolicitacaoComprasServicos" name="PMS - Solicita&#xe7;&#xe3;o de Compras/Servi&#xe7;os" serverId="MInhaCNC_Homolog" version="5" author="" extendedFields="&lt;list>&#xA;  &lt;org.eclipse.bpmn2.impl.ExtendedPropertyImpl>&#xA;    &lt;propertyName>AutomaticTasks&lt;/propertyName>&#xA;    &lt;propertyType>0&lt;/propertyType>&#xA;    &lt;propertyDescription>AutomaticTasks&lt;/propertyDescription>&#xA;    &lt;propertyValue>&lt;/propertyValue>&#xA;    &lt;isDefaultProperty>false&lt;/isDefaultProperty>&#xA;  &lt;/org.eclipse.bpmn2.impl.ExtendedPropertyImpl>&#xA;&lt;/list>" cardIndex="39453" formSource="server" managerMechanism="Papel" managerAssignmentController="&lt;org.eclipse.bpmn2.impl.AssignmentControllerRole>&#xA;  &lt;roleId>admin&lt;/roleId>&#xA;  &lt;mechanismName>Papel&lt;/mechanismName>&#xA;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerRole>" category="Solicita&#xe7;&#xf5;es.GSP" volume="Default" expedient="Default" instruction="" mobileReady="true"/>
+  <bpmn2:BpmnProcess id="SolicitacaoComprasServicos" name="PMS - Solicita&#xe7;&#xe3;o de Compras/Servi&#xe7;os" serverId="minhaCNC_Prod" version="5" author="" extendedFields="&lt;list>&#xA;  &lt;org.eclipse.bpmn2.impl.ExtendedPropertyImpl>&#xA;    &lt;propertyName>AutomaticTasks&lt;/propertyName>&#xA;    &lt;propertyType>0&lt;/propertyType>&#xA;    &lt;propertyDescription>AutomaticTasks&lt;/propertyDescription>&#xA;    &lt;propertyValue>&lt;/propertyValue>&#xA;    &lt;isDefaultProperty>false&lt;/isDefaultProperty>&#xA;  &lt;/org.eclipse.bpmn2.impl.ExtendedPropertyImpl>&#xA;&lt;/list>" cardIndex="39453" formSource="server" managerMechanism="Papel" managerAssignmentController="&lt;org.eclipse.bpmn2.impl.AssignmentControllerRole>&#xA;  &lt;roleId>admin&lt;/roleId>&#xA;  &lt;mechanismName>Papel&lt;/mechanismName>&#xA;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerRole>" category="Solicita&#xe7;&#xf5;es.GSP" volume="Default" expedient="Default" instruction="" mobileReady="true"/>
   <bpmn2:SequenceFlow id="flow166" name="" sourceRef="startevent2" targetRef="task172" atividadeFluxo="" atividadeRetorno="" extendedFields="&lt;list/>"/>
   <bpmn2:SequenceFlow id="flow184" name="" sourceRef="task180" targetRef="task172" atividadeFluxo="" atividadeRetorno="" extendedFields="&lt;list/>"/>
   <bpmn2:SequenceFlow id="flow187" name="" sourceRef="task172" targetRef="task145" atividadeFluxo="" atividadeRetorno="" extendedFields="&lt;list/>"/>

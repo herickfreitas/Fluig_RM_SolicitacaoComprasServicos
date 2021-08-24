@@ -54,6 +54,62 @@
    </array>
   </void>
   <void method="put">
+   <string>camposFormulario, documentoId = 8637</string>
+   <array class="java.lang.String" length="17">
+    <void index="0">
+     <string>chefia</string>
+    </void>
+    <void index="1">
+     <string>codcfo</string>
+    </void>
+    <void index="2">
+     <string>CodColigada</string>
+    </void>
+    <void index="3">
+     <string>codFilial</string>
+    </void>
+    <void index="4">
+     <string>codHistorico</string>
+    </void>
+    <void index="5">
+     <string>codHistoricoLongo</string>
+    </void>
+    <void index="6">
+     <string>CodPrj</string>
+    </void>
+    <void index="7">
+     <string>dataEmissao</string>
+    </void>
+    <void index="8">
+     <string>DescContrato</string>
+    </void>
+    <void index="9">
+     <string>IdentificadorFluig</string>
+    </void>
+    <void index="10">
+     <string>IdMov</string>
+    </void>
+    <void index="11">
+     <string>n_solicitacao</string>
+    </void>
+    <void index="12">
+     <string>NSeqItmMov</string>
+    </void>
+    <void index="13">
+     <string>numeroMov</string>
+    </void>
+    <void index="14">
+     <string>solicitante</string>
+    </void>
+    <void index="15">
+     <string>TipoAprovacao</string>
+    </void>
+    <void index="16">
+     <string>valorliquido</string>
+    </void>
+   </array>
+  </void>
+  <void method="put">
    <string>mecanismoGrupo</string>
    <object class="java.util.ArrayList">
     <void method="add">
@@ -2721,6 +2777,24 @@
      <string>Teste</string>
     </void>
    </array>
+  </void>
+  <void method="put">
+   <string>mecanismoPapel</string>
+   <object class="java.util.ArrayList">
+    <void method="add">
+     <object class="com.totvs.tds.ecm.foundation.ws.WorkflowRoleDto">
+      <void property="companyId">
+       <long>1</long>
+      </void>
+      <void property="roleDescription">
+       <string>admin</string>
+      </void>
+      <void property="roleId">
+       <string>admin</string>
+      </void>
+     </object>
+    </void>
+   </object>
   </void>
   <void method="put">
    <string>mecanismo</string>
